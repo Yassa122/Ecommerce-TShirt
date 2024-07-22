@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "Ecommerce-TShirt",
+			"path": "."
+		},
+		{
+			"name": "backend",
+			"path": "../commerce/backend"
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true
+	}
+}
