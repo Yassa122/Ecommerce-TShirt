@@ -1,23 +1,11 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import admin from 'firebase-admin';
-import adminRoutes from './routes/adminRoutes';
-import serviceAccount from './service-account-file.json'; // Corrected path
-// import authRoutes from './routes/authRoutes';
+import './firebase'; // Ensure Firebase is initialized before anything else
+import { db } from './firebase';
 import userRoutes from './routes/userRoutes';
+
 dotenv.config();
 console.log('Environment variables loaded');
-
-// Initialize Firebase Admin
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
-});
-
-console.log('Firebase Admin initialized');
-
-// Access Firestore
-const db = admin.firestore();
-console.log('Firestore accessed');
 
 const app = express();
 app.use(express.json());
@@ -25,13 +13,22 @@ const port = process.env.PORT || 3000;
 
 console.log('Registering routes');
 app.use('/api/users', userRoutes);
-app.use('/api/admin', adminRoutes);
-// app.use('/api/auth', authRoutes);
-
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
 
 app.listen(port, () => {
-  console.log(Server is running on http://localhost:${port});
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+app.get('/testFirestore', async (req, res) => {
+  try {
+    console.log('Accessing Firestore...');
+    const testDoc = db.collection('testCollection').doc('testDoc');
+    await testDoc.set({ testField: 'testValue' });
+    console.log('Document written to Firestore');
+    const doc = await testDoc.get();
+    console.log('Document read from Firestore:', doc.data());
+    res.status(200).json(doc.data());
+  } catch (error) {
+    console.error('Error accessing Firestore:', error);
+    res.status(500).send((error as Error).message);
+  }
 });
