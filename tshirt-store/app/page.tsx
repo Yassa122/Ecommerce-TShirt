@@ -1,8 +1,8 @@
 "use client"
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Carousel from '../components/Carousel';
-import Navbar from '../components/Navbar';
+import Carousel from '../components/carousel';
+import Navbar from '../components/navbar';
 
 const Home: React.FC = () => {
   const products = [
@@ -43,17 +43,25 @@ const Home: React.FC = () => {
           {products.map((product) => (
             <motion.div
               key={product.id}
-              className="bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="relative bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-2xl hover:shadow-2xl transition-shadow duration-300 drop-shadow-2xl"
               whileHover={{ scale: 1.05 }}
             >
-              <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
-              <div className="p-6">
-                <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-                <p className="text-lg mb-4">{product.description}</p>
-                <Link href={`/product/${product.id}`} legacyBehavior>
-                  <a className="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500 transition">View Product</a>
-                </Link>
+              <div className="w-full flex items-center justify-center" style={{ height: '300px' }}>
+                <img src={product.image} alt={product.name} className="object-contain w-full h-auto" />
               </div>
+              <motion.div
+                className="absolute inset-0 bg-black bg-opacity-75 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+              >
+                <div className="text-center text-white">
+                  <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
+                  <p className="text-lg mb-4">{product.description}</p>
+                  <Link href={`/product/${product.id}`} legacyBehavior>
+                    <a className="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500 transition">View Product</a>
+                  </Link>
+                </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
@@ -67,7 +75,7 @@ const Home: React.FC = () => {
           {testimonials.map((testimonial) => (
             <motion.div
               key={testimonial.id}
-              className="bg-zinc-900 dark:bg-white rounded-lg p-6 shadow-lg"
+              className="bg-zinc-900 dark:bg-white rounded-lg p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 drop-shadow-lg"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: testimonial.id * 0.2 }}
