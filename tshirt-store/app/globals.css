@@ -25,6 +25,88 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+/* Add this to your global CSS file */
+
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #000;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #4f46e5; /* Tailwind's indigo-600 */
+}
+
+.toggle-checkbox:checked + .toggle-label .sun-icon {
+  opacity: 0;
+}
+
+.toggle-checkbox:checked + .toggle-label .moon-icon {
+  opacity: 1;
+}
+
+.toggle-checkbox {
+  right: 0;
+  transition: right 0.2s;
+}
+
+.toggle-label {
+  width: 3rem;
+  height: 1.5rem;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.toggle-icon {
+  transition: opacity 0.2s;
+}
+
+.sun-icon {
+  opacity: 1;
+}
+
+.moon-icon {
+  opacity: 0;
+}
+
+/* Add this to your global CSS file */
+
+.product-card {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.product-card img {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.product-card .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.product-card:hover .overlay {
+  opacity: 1;
+}
+
 
 @layer utilities {
   .text-balance {
