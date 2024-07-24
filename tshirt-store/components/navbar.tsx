@@ -1,6 +1,6 @@
 "use client"
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
 
 const Navbar: React.FC = () => {
@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
         <Link href="/" legacyBehavior>
           <a className="text-2xl font-bold">T-Shirt Store</a>
         </Link>
-        <div className="hidden md:flex space-x-4">
+        <div className="hidden md:flex space-x-4 items-center">
           <Link href="/" legacyBehavior>
             <a className="hover:text-blue-400 transition">Home</a>
           </Link>
@@ -51,12 +51,23 @@ const Navbar: React.FC = () => {
           <Link href="#contact" legacyBehavior>
             <a className="hover:text-blue-400 transition">Contact</a>
           </Link>
-          <button
-            onClick={toggleDarkMode}
-            className="bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-2 rounded transition"
-          >
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
+          <div className="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+            <input
+              type="checkbox"
+              name="toggle"
+              id="darkModeToggle"
+              checked={isDarkMode}
+              onChange={toggleDarkMode}
+              className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+            />
+            <label
+              htmlFor="darkModeToggle"
+              className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+            >
+              <span className="toggle-icon sun-icon absolute left-1 top-1 w-4 h-4 bg-yellow-500 rounded-full"></span>
+              <span className="toggle-icon moon-icon absolute right-1 top-1 w-4 h-4 bg-gray-900 rounded-full"></span>
+            </label>
+          </div>
         </div>
         <div className="md:hidden flex items-center">
           <button onClick={toggleMenu} className="text-2xl">
@@ -78,12 +89,25 @@ const Navbar: React.FC = () => {
           <Link href="#contact" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Contact</a>
           </Link>
-          <button
-            onClick={toggleDarkMode}
-            className="block bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-2 rounded mx-auto my-4 transition"
-          >
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
+          <div className="flex items-center justify-center my-4">
+            <div className="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+              <input
+                type="checkbox"
+                name="toggle"
+                id="darkModeToggleMobile"
+                checked={isDarkMode}
+                onChange={toggleDarkMode}
+                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+              />
+              <label
+                htmlFor="darkModeToggleMobile"
+                className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
+              >
+                <span className="toggle-icon sun-icon absolute left-1 top-1 w-4 h-4 bg-yellow-500 rounded-full"></span>
+                <span className="toggle-icon moon-icon absolute right-1 top-1 w-4 h-4 bg-gray-900 rounded-full"></span>
+              </label>
+            </div>
+          </div>
         </div>
       )}
     </nav>
