@@ -9,17 +9,21 @@ interface DecodedToken {
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-  
+  const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Access Denied. No Token Provided.' });
+  }
+
+  const token = authHeader.split(' ')[1];
   if (!token) {
-    return res.status(401).send('Access Denied. No Token Provided.');
+    return res.status(401).json({ message: 'Access Denied. No Token Provided.' });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as DecodedToken;
-    (req as any).user = decoded;
-    next();
-  } catch (ex) {
-    res.status(400).send('Invalid Token.');
+    (req as any).user = decoded; // Attach the decoded token to the request object
+    next(); // Proceed to the next middleware or route handler
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid Token.' });
   }
 };
