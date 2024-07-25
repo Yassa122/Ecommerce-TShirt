@@ -1,29 +1,42 @@
-import dotenv from 'dotenv';
 import { NextFunction, Request, Response } from 'express';
+import admin from 'firebase-admin';
 import jwt from 'jsonwebtoken';
 
-dotenv.config();
+const db = admin.firestore();
 
 interface DecodedToken {
   id: string;
 }
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Access Denied. No Token Provided.' });
-  }
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers['authorization']?.split(' ')[1];
 
-  const token = authHeader.split(' ')[1];
   if (!token) {
-    return res.status(401).json({ message: 'Access Denied. No Token Provided.' });
+    return res.status(401).send('Access Denied. No Token Provided.');
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as DecodedToken;
-    (req as any).user = decoded; // Attach the decoded token to the request object
-    next(); // Proceed to the next middleware or route handler
-  } catch (error) {
-    res.status(400).json({ message: 'Invalid Token.' });
-  }
+    const decoded = jwt.decode(token) as DecodedToken;
+    if (!decoded || !decoded.id) {
+      throw new Error('Invalid token');
+    }
+
+    const userRef = db.collection('users').doc(decoded.id);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      throw new Error('User not found');
+    }
+
+    const userData = userDoc.data();
+    if (!userData) {
+      throw new Error('User data not found');
+    }
+
+    jwt.verify(token, userData.secret);
+    (req as any).user = decoded;
+    next();
+  } catch (ex) {
+    res.status(400).send('Invalid Token.');
+  }
 };
