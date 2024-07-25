@@ -1,4 +1,6 @@
-"use client"
+
+// components/Navbar.tsx
+"use client";
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
@@ -42,11 +44,11 @@ const Navbar: React.FC = () => {
           <Link href="/" legacyBehavior>
             <a className="hover:text-blue-400 transition">Home</a>
           </Link>
-          <Link href="#products" legacyBehavior>
+          <Link href="/pages/products" legacyBehavior>
             <a className="hover:text-blue-400 transition">Products</a>
           </Link>
-          <Link href="#testimonials" legacyBehavior>
-            <a className="hover:text-blue-400 transition">Testimonials</a>
+          <Link href="/pages/Cart" legacyBehavior>
+            <a className="hover:text-blue-400 transition">Cart</a>
           </Link>
           <Link href="#contact" legacyBehavior>
             <a className="hover:text-blue-400 transition">Contact</a>
@@ -80,7 +82,7 @@ const Navbar: React.FC = () => {
           <Link href="/" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Home</a>
           </Link>
-          <Link href="#products" legacyBehavior>
+          <Link href="pages/products" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Products</a>
           </Link>
           <Link href="#testimonials" legacyBehavior>
