@@ -1,21 +1,29 @@
-"use client"
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import Carousel from '../components/carousel';
-import Navbar from '../components/navbar';
+"use client";
+import axios from "axios";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import Carousel from "../components/carousel";
+import Navbar from "../components/navbar";
 
 const Home: React.FC = () => {
-  const products = [
-    { id: 1, name: 'Product 1', description: 'Description of Product 1', image: 't1.jpg' },
-    { id: 2, name: 'Product 2', description: 'Description of Product 2', image: 't2.jpg' },
-    { id: 3, name: 'Product 3', description: 'Description of Product 3', image: 't3.jpg' },
-  ];
-
-  const testimonials = [
+  const [products, setProducts] = useState([]);
+  const [testimonials, setTestimonials] = useState([
     { id: 1, text: "Best T-shirts ever!", author: "John Doe" },
     { id: 2, text: "Great quality and fast shipping!", author: "Jane Smith" },
     { id: 3, text: "I love the designs!", author: "Mike Johnson" },
-  ];
+  ]);
+
+  useEffect(() => {
+    // Fetch actual products from your API
+    axios.get("http://localhost:3000/api/users/products")
+      .then((response) => {
+        setProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  }, []);
 
   return (
     <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
@@ -47,7 +55,7 @@ const Home: React.FC = () => {
               whileHover={{ scale: 1.05 }}
             >
               <div className="w-full flex items-center justify-center" style={{ height: '300px' }}>
-                <img src={product.image} alt={product.name} className="object-contain w-full h-auto" />
+                <img src={product.Images[0]} alt={product.ProductName} style={{ objectFit: 'cover' }} className="object-contain w-full h-auto" />
               </div>
               <motion.div
                 className="absolute inset-0 bg-black bg-opacity-75 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
@@ -55,8 +63,8 @@ const Home: React.FC = () => {
                 whileHover={{ opacity: 1 }}
               >
                 <div className="text-center text-white">
-                  <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
-                  <p className="text-lg mb-4">{product.description}</p>
+                  <h2 className="text-2xl font-bold mb-2">{product.ProductName}</h2>
+                  <p className="text-lg mb-4">{product.Type}</p>
                   <Link href={`/product/${product.id}`} legacyBehavior>
                     <a className="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500 transition">View Product</a>
                   </Link>
