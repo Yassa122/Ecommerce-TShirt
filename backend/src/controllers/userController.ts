@@ -2,17 +2,15 @@ import { Request, Response } from 'express';
 import admin from 'firebase-admin';
 
 const db = admin.firestore();
+const storage = admin.storage().bucket();
 
 export const getProducts = async (req: Request, res: Response) => {
-  console.log('Received request to get products');
   try {
-    const productsRef = db.collection('Product'); // Ensure the collection name matches exactly
-    const snapshot = await productsRef.get();
-    console.log('Fetched products from Firestore:', snapshot.docs.map(doc => doc.data()));
-    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const productsSnapshot = await db.collection('products').get();
+    const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
     res.status(500).send((error as Error).message);
   }
 };
