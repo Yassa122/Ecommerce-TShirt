@@ -1,10 +1,15 @@
 import admin from 'firebase-admin';
-import serviceAccount from './service-account-file.json';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const serviceAccount = require('./service-account-file.json');
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  storageBucket: "gs://e-commerce-t-shirt.appspot.com" // Add your bucket name here
 });
 
 export const db = admin.firestore();
-export { admin };
-console.log('Firebase Admin initialized and Firestore accessed successfully');
+export const storage = admin.storage().bucket(); // Access the storage bucket
