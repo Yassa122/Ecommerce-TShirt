@@ -1,63 +1,67 @@
-"use client"
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
+"use client";
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
-const products = [
-  { id: 1, name: 'Product 1', description: 'Description of Product 1', image: 't1.jpg' },
-  { id: 2, name: 'Product 2', description: 'Description of Product 2', image: 't2.jpg' },
-  { id: 3, name: 'Product 3', description: 'Description of Product 3', image: 't3.jpg' },
+const images = [
+  { id: 1, image: 'g1.jpg' },
+  { id: 2, image: 'g2.jpg' },
+  { id: 3, image: 'g3.jpg' },
 ];
 
 const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === products.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? products.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
   };
 
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
+    return () => clearInterval(interval); // Clean up the interval on unmount
+  }, []);
+
   return (
-    <div className="relative w-full h-96 overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden">
       <AnimatePresence>
-        {products.map((product, index) => (
+        {images.map((image, index) => (
           index === currentIndex && (
             <motion.div
-              key={product.id}
+              key={image.id}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
               className="absolute w-full h-full"
             >
-              <img src={product.image} alt={product.name} layout="fill" objectFit="cover" />
-              <div className="absolute bottom-0 bg-black bg-opacity-50 w-full p-4 text-white">
-                <h2 className="text-2xl font-bold">{product.name}</h2>
-                <p className="text-lg">{product.description}</p>
-                <Link href={`/product/${product.id}`} legacyBehavior>
-                  <a className="text-blue-500">View Product</a>
-                </Link>
-              </div>
+              <img src={image.image} alt={`Gallery Image ${image.id}`} className="w-full h-full object-contain" />
             </motion.div>
           )
         ))}
       </AnimatePresence>
       <button
         onClick={prevSlide}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full"
       >
-        Prev
+        &lt;
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-4 rounded-full"
       >
-        Next
+        &gt;
       </button>
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`w-3 h-3 rounded-full ${index === currentIndex ? 'bg-white' : 'bg-gray-500'}`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
