@@ -2,13 +2,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const images = [
-  { id: 1, image: 'g1.jpg' },
-  { id: 2, image: 'g2.jpg' },
-  { id: 3, image: 'g3.jpg' },
-];
+type CarouselProps = {
+  images: { id: number; image: string }[];
+  autoPlay?: boolean;
+};
 
-const Carousel: React.FC = () => {
+const Carousel: React.FC<CarouselProps> = ({ images, autoPlay = true }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
@@ -20,9 +19,11 @@ const Carousel: React.FC = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
-    return () => clearInterval(interval); // Clean up the interval on unmount
-  }, []);
+    if (autoPlay) {
+      const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
+      return () => clearInterval(interval); // Clean up the interval on unmount
+    }
+  }, [autoPlay]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
