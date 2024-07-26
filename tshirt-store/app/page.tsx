@@ -8,10 +8,11 @@ import Navbar from "../components/navbar";
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState([]);
-  const [testimonials, setTestimonials] = useState([
-    { id: 1, text: "Best T-shirts ever!", author: "John Doe" },
-    { id: 2, text: "Great quality and fast shipping!", author: "Jane Smith" },
-    { id: 3, text: "I love the designs!", author: "Mike Johnson" },
+  const [galleryImages, setGalleryImages] = useState([
+    // Add your gallery images URLs here
+    "https://via.placeholder.com/800x400", // Example image
+    "https://via.placeholder.com/800x400", // Example image
+    "https://via.placeholder.com/800x400", // Example image
   ]);
 
   useEffect(() => {
@@ -26,9 +27,9 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
+    <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 flex-grow">
         {/* Hero Section */}
         <motion.div
           className="hero text-center py-16"
@@ -44,6 +45,11 @@ const Home: React.FC = () => {
             </a>
           </Link>
         </motion.div>
+
+        {/* Carousel Section */}
+        <div className="my-8">
+          <Carousel images={galleryImages} autoPlay={true} />
+        </div>
 
         {/* Products Section */}
         <h2 id="products" className="text-4xl font-bold text-center my-8">Our Products</h2>
@@ -65,6 +71,7 @@ const Home: React.FC = () => {
                 <div className="text-center text-white">
                   <h2 className="text-2xl font-bold mb-2">{product.ProductName}</h2>
                   <p className="text-lg mb-4">{product.Type}</p>
+                  <p className="text-lg font-bold">${typeof product.Price === 'number' ? product.Price.toFixed(2) : "N/A"}</p>
                   <Link href={`/product/${product.id}`} legacyBehavior>
                     <a className="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500 transition">View Product</a>
                   </Link>
@@ -73,27 +80,48 @@ const Home: React.FC = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Carousel Section */}
-        <Carousel />
-
-        {/* Testimonials Section */}
-        <h2 id="testimonials" className="text-4xl font-bold text-center my-8">What Our Customers Say</h2>
-        <div className="testimonials grid grid-cols-1 md:grid-cols-3 gap-6 py-8">
-          {testimonials.map((testimonial) => (
-            <motion.div
-              key={testimonial.id}
-              className="bg-zinc-900 dark:bg-white rounded-lg p-6 shadow-lg hover:shadow-2xl transition-shadow duration-300 drop-shadow-lg"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: testimonial.id * 0.2 }}
-            >
-              <p className="text-lg mb-4 dark:text-black">"{testimonial.text}"</p>
-              <h3 className="text-xl font-bold dark:text-black">- {testimonial.author}</h3>
-            </motion.div>
-          ))}
-        </div>
       </div>
+
+      {/* Footer Section */}
+      <footer className="bg-zinc-900 dark:bg-gray-800 text-white dark:text-gray-300 py-8 mt-8">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Company Info */}
+          <div>
+            <h3 className="text-2xl font-bold mb-4">T-Shirt Store</h3>
+            <p>Discover your style with our exclusive collection of T-shirts. Quality and comfort at its best.</p>
+          </div>
+          {/* Navigation Links */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+            <ul>
+              <li><Link href="#home" legacyBehavior><a className="hover:underline">Home</a></Link></li>
+              <li><Link href="#products" legacyBehavior><a className="hover:underline">Products</a></Link></li>
+              <li><Link href="#about" legacyBehavior><a className="hover:underline">About Us</a></Link></li>
+              <li><Link href="#contact" legacyBehavior><a className="hover:underline">Contact</a></Link></li>
+            </ul>
+          </div>
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Contact Us</h3>
+            <p>Email: contact@tshirtstore.com</p>
+            <p>Phone: +123 456 7890</p>
+            <p>Address: 123 Fashion St, City, Country</p>
+            {/* Social Media Links */}
+            <div className="mt-4">
+              <h4 className="text-lg font-bold mb-2">Follow Us</h4>
+              <div className="flex space-x-4">
+                <a href="#" className="text-blue-400 hover:text-blue-600"><i className="fab fa-facebook-f"></i></a>
+                <a href="#" className="text-blue-400 hover:text-blue-600"><i className="fab fa-twitter"></i></a>
+                <a href="#" className="text-blue-400 hover:text-blue-600"><i className="fab fa-instagram"></i></a>
+                <a href="#" className="text-blue-400 hover:text-blue-600"><i className="fab fa-linkedin-in"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mt-8 text-center border-t border-gray-700 pt-4">
+          <p>&copy; 2024 T-Shirt Store. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
