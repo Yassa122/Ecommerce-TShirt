@@ -19,12 +19,11 @@ export const getProducts = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const productDoc = db.collection('Product').doc(id); // Ensure the collection name matches exactly
-    const product = await productDoc.get();
-    if (!product.exists) {
+    const productDoc = await db.collection('products').doc(id).get(); // Ensure the collection name matches exactly
+    if (!productDoc.exists) {
       res.status(404).send('Product not found');
     } else {
-      res.status(200).json({ id: product.id, ...product.data() });
+      res.status(200).json({ id: productDoc.id, ...productDoc.data() });
     }
   } catch (error) {
     res.status(500).send((error as Error).message);
