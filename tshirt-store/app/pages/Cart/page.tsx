@@ -1,4 +1,3 @@
-// pages/cart.tsx
 "use client";
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +19,7 @@ const CartPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch cart items from local storage
-    const items = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const items = JSON.parse(localStorage.getItem('cartItems') || '[]') as CartItem[];
     setCartItems(items);
     calculateTotal(items);
   }, []);
