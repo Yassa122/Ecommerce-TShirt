@@ -1,3 +1,4 @@
+// pages/product/[id]/ProductDetail.tsx
 "use client";
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -37,6 +38,17 @@ const ProductDetail: React.FC = () => {
 
   const addToCart = () => {
     if (selectedSize) {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const newItem = {
+        id: product.id,
+        ProductName: product.ProductName,
+        Quantity: 1, // You can modify this logic to allow selecting quantity
+        TotalPrice: product.Price,
+        Images: product.Images,
+        selectedSize,
+      };
+      cartItems.push(newItem);
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
       setCartMessage("Product added to cart!");
     } else {
       setCartMessage("Please select a size.");
