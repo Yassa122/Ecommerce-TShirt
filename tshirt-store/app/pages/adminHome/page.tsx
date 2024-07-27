@@ -28,11 +28,24 @@ ChartJS.register(
   Legend
 );
 
+interface Product {
+  id: string;
+  ProductName: string;
+  Type: string;
+  Price: number;
+  Images: string[];
+  Sizes: { size: string; quantity: number }[];
+}
+
+interface Order {
+  date: string;
+  total: number;
+}
+
 const AdminHome = () => {
-  // State and other variables here...
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,7 +92,7 @@ const AdminHome = () => {
     ],
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
         await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
@@ -93,13 +106,13 @@ const AdminHome = () => {
     }
   };
 
-  const handleCardClick = (id) => {
+  const handleCardClick = (id: string) => {
     if (!editing) {
       router.push(`/pages/editProduct/${id}`);
     }
   };
 
-  const handleTextChange = (id, field, value) => {
+  const handleTextChange = (id: string, field: keyof Product, value: string | number) => {
     setProducts(products.map(product =>
       product.id === id ? { ...product, [field]: value } : product
     ));
