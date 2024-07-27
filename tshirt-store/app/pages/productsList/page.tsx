@@ -5,13 +5,27 @@ import { useEffect, useState } from 'react';
 import Sidebar from '../../../components/sidebar';
 import AddProduct from '../addProduct/page';
 
+interface Size {
+  size: string;
+  quantity: number;
+}
+
+interface Product {
+  id: string;
+  ProductName: string;
+  Price: number;
+  Type: string;
+  Images: string[];
+  Sizes: Size[];
+}
+
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [editIndex, setEditIndex] = useState(-1);
-  const [editProduct, setEditProduct] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [showAddProductModal, setShowAddProductModal] = useState<boolean>(false);
 
   useEffect(() => {
     // Fetch products from the API
@@ -24,22 +38,26 @@ const ProductList = () => {
       });
   }, []);
 
-  const handleEdit = (index) => {
+  const handleEdit = (index: number) => {
     setEditIndex(index);
     setEditProduct({ ...products[index] });
   };
 
   const handleSave = () => {
     // Save the edited product (you can also send this data to the server)
-    const updatedProducts = [...products];
-    updatedProducts[editIndex] = editProduct;
-    setProducts(updatedProducts);
-    setEditIndex(-1);
-    setEditProduct(null);
+    if (editProduct !== null && editIndex !== null) {
+      const updatedProducts = [...products];
+      updatedProducts[editIndex] = editProduct;
+      setProducts(updatedProducts);
+      setEditIndex(null);
+      setEditProduct(null);
+    }
   };
 
-  const handleChange = (e) => {
-    setEditProduct({ ...editProduct, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (editProduct !== null) {
+      setEditProduct({ ...editProduct, [e.target.name]: e.target.value });
+    }
   };
 
   const toggleAddProductModal = () => {
@@ -99,7 +117,7 @@ const ProductList = () => {
                         <input
                           type="text"
                           name="ProductName"
-                          value={editProduct.ProductName}
+                          value={editProduct?.ProductName || ''}
                           onChange={handleChange}
                           className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
@@ -112,7 +130,7 @@ const ProductList = () => {
                         <input
                           type="text"
                           name="Price"
-                          value={editProduct.Price}
+                          value={editProduct?.Price || ''}
                           onChange={handleChange}
                           className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
@@ -125,7 +143,7 @@ const ProductList = () => {
                         <input
                           type="text"
                           name="Type"
-                          value={editProduct.Type}
+                          value={editProduct?.Type || ''}
                           onChange={handleChange}
                           className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
