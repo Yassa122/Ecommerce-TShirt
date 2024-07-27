@@ -1,18 +1,21 @@
 "use client";
 import axios from "axios";
 import {
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Title,
-    Tooltip,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
 } from "chart.js";
 import { motion } from "framer-motion";
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import Sidebar from '../../../components/sidebar';
 import AddProduct from "../addProduct/page";
 
 ChartJS.register(
@@ -26,12 +29,15 @@ ChartJS.register(
 );
 
 const AdminHome = () => {
+  // State and other variables here...
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editing, setEditing] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
@@ -61,11 +67,11 @@ const AdminHome = () => {
   }, [darkMode]);
 
   const orderData = {
-    labels: orders.map((order) => order.date), // Replace with actual date field
+    labels: orders.map((order) => order.date),
     datasets: [
       {
         label: "Total Orders",
-        data: orders.map((order) => order.total), // Replace with actual total field
+        data: orders.map((order) => order.total),
         fill: false,
         borderColor: "rgba(75, 192, 192, 1)",
         tension: 0.1,
@@ -73,39 +79,44 @@ const AdminHome = () => {
     ],
   };
 
+  const handleDelete = async (id) => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      try {
+        await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
+        setProducts(products.filter(product => product.id !== id));
+        setFilteredProducts(filteredProducts.filter(product => product.id !== id));
+        alert("Product deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("Failed to delete product. Please try again.");
+      }
+    }
+  };
+
+  const handleCardClick = (id) => {
+    if (!editing) {
+      router.push(`/pages/editProduct/${id}`);
+    }
+  };
+
+  const handleTextChange = (id, field, value) => {
+    setProducts(products.map(product =>
+      product.id === id ? { ...product, [field]: value } : product
+    ));
+  };
+
+  const toggleEditing = () => {
+    setEditing(!editing);
+  };
+
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
-      <div className={`fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 p-6 shadow-lg z-40 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
-        <button onClick={() => setSidebarOpen(false)} className="block md:hidden text-right text-gray-700 dark:text-gray-300 mb-6">
-          &times; Close
-        </button>
-        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Admin Dashboard</h2>
-        <nav className="space-y-4">
-          <a href="/admin/products" className="block flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
-            <i className="fas fa-box-open mr-2"></i> Products
-          </a>
-          <a href="/admin/add-product" className="block flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
-            <i className="fas fa-plus-circle mr-2"></i> Add Product
-          </a>
-          <a href="/admin/orders" className="block flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
-            <i className="fas fa-shopping-cart mr-2"></i> Orders
-          </a>
-          <a href="/admin/settings" className="block flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
-            <i className="fas fa-cog mr-2"></i> Settings
-          </a>
-          <div className="flex items-center mt-4">
-            <span className="text-gray-700 dark:text-gray-300">Dark Mode</span>
-            <label className="ml-auto inline-flex items-center cursor-pointer">
-              <span className="relative">
-                <input type="checkbox" className="hidden" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
-                <span className="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></span>
-                <span className={`toggle__dot absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0 transition-transform ${darkMode ? 'translate-x-full bg-blue-600' : ''}`}></span>
-              </span>
-            </label>
-          </div>
-        </nav>
-      </div>
-
+      <Sidebar
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="md:hidden block p-4 bg-gray-700 text-white dark:bg-gray-900 dark:text-gray-300 focus:outline-none z-50 absolute top-4 left-4"
@@ -113,7 +124,7 @@ const AdminHome = () => {
         Menu
       </button>
 
-      <main className="flex-1 p-8 bg-gray-100 dark:bg-gray-900 transition-all duration-300 ease-in-out">
+      <main className="flex-1 p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-semibold text-gray-700 dark:text-gray-300">Dashboard</h1>
           <div className="w-full md:w-1/3">
@@ -128,30 +139,71 @@ const AdminHome = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-          <motion.div
-          key={product.id}
-          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <img src={product.Images[0]} alt={product.ProductName} className="mb-4 max-h-40 w-full object-cover rounded-md" />
-          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{product.ProductName}</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-2">Price: ${product.Price}</p>
-          <p className="text-gray-600 dark:text-gray-400 mb-2">Type: {product.Type}</p>
-          <div className="text-gray-600 dark:text-gray-400">
-            <p className="font-medium">Sizes and Quantities:</p>
-            <ul className="list-disc pl-5">
-              {product.Sizes && product.Sizes.map((sizeObj, index) => (
-                <li key={index} className="mt-1">
-                  <span className="font-medium">Size:</span> {sizeObj.size}, 
-                  <span className="font-medium"> Quantity:</span> {sizeObj.quantity}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </motion.div>
-        
+            <motion.div
+              key={product.id}
+              className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg cursor-pointer"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => handleCardClick(product.id)}
+            >
+              <img src={product.Images[0]} alt={product.ProductName} className="mb-4 max-h-40 w-full object-cover rounded-md" />
+              <div className="mb-2">
+                <input
+                  type="text"
+                  value={product.ProductName}
+                  onChange={(e) => handleTextChange(product.id, 'ProductName', e.target.value)}
+                  className="bg-transparent w-full text-lg font-semibold text-gray-700 dark:text-gray-300 border-b border-transparent focus:outline-none focus:border-blue-500"
+                  disabled={!editing}
+                />
+              </div>
+              <div className="mb-2">
+                <input
+                  type="text"
+                  value={product.Type}
+                  onChange={(e) => handleTextChange(product.id, 'Type', e.target.value)}
+                  className="bg-transparent w-full text-gray-600 dark:text-gray-400 border-b border-transparent focus:outline-none focus:border-blue-500"
+                  disabled={!editing}
+                />
+              </div>
+              <div className="mb-2">
+                <input
+                  type="number"
+                  value={product.Price}
+                  onChange={(e) => handleTextChange(product.id, 'Price', e.target.value)}
+                  className="bg-transparent w-full text-gray-600 dark:text-gray-400 border-b border-transparent focus:outline-none focus:border-blue-500"
+                  disabled={!editing}
+                />
+              </div>
+              <div className="text-gray-600 dark:text-gray-400">
+                <p className="font-medium">Sizes and Quantities:</p>
+                <ul className="list-disc pl-5">
+                  {product.Sizes && product.Sizes.map((sizeObj, index) => (
+                    <li key={index} className="mt-1">
+                      <span className="font-medium">Size:</span> {sizeObj.size}, 
+                      <span className="font-medium"> Quantity:</span> {sizeObj.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-4 flex justify-end space-x-4">
+                <button
+                  className="text-blue-500 hover:underline font-bold"
+                  onClick={(e) => { e.stopPropagation(); toggleEditing(); }}
+                >
+                  <FaEdit className="inline-block mr-2" />
+                  {editing ? 'Save' : 'Edit'}
+                </button>
+                <button
+                  className="text-red-500 hover:underline font-bold"
+                  onClick={(e) => { e.stopPropagation(); handleDelete(product.id); }}
+                >
+                  <FaTrash className="inline-block mr-2" />
+                  Delete
+                </button>
+              </div>
+            </motion.div>
           ))}
         </div>
 
@@ -160,7 +212,7 @@ const AdminHome = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
           >
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Add New Product</h2>
             <AddProduct />
@@ -170,7 +222,7 @@ const AdminHome = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
           >
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Order Summary</h2>
             <Line data={orderData} />
