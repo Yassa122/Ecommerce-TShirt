@@ -1,6 +1,17 @@
 import Link from 'next/link';
 
-const ProductCard = ({ product }) => {
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
+
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="relative bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 drop-shadow-lg">
       <div className="w-full h-64 flex items-center justify-center">
