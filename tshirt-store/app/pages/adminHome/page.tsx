@@ -34,17 +34,14 @@ const AdminHome = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Check for dark mode preference
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
 
-    // Fetch current products
     axios.get("http://localhost:3000/api/admin/getAllProducts").then((response) => {
       setProducts(response.data);
       setFilteredProducts(response.data);
     });
 
-    // Fetch order data
     axios.get("/api/admin/orders").then((response) => {
       setOrders(response.data);
     });
@@ -59,12 +56,10 @@ const AdminHome = () => {
   }, [searchTerm, products]);
 
   useEffect(() => {
-    // Update dark mode class on body
     document.body.className = darkMode ? "dark" : "";
     localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode]);
 
-  // Mock data for graphs
   const orderData = {
     labels: orders.map((order) => order.date), // Replace with actual date field
     datasets: [
@@ -80,7 +75,6 @@ const AdminHome = () => {
 
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
-      {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 p-6 shadow-lg z-40 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
         <button onClick={() => setSidebarOpen(false)} className="block md:hidden text-right text-gray-700 dark:text-gray-300 mb-6">
           &times; Close
@@ -112,7 +106,6 @@ const AdminHome = () => {
         </nav>
       </div>
 
-      {/* Toggle Button for Sidebar */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="md:hidden block p-4 bg-gray-700 text-white dark:bg-gray-900 dark:text-gray-300 focus:outline-none z-50 absolute top-4 left-4"
@@ -120,7 +113,6 @@ const AdminHome = () => {
         Menu
       </button>
 
-      {/* Main Content */}
       <main className="flex-1 p-8 bg-gray-100 dark:bg-gray-900 transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-semibold text-gray-700 dark:text-gray-300">Dashboard</h1>
@@ -136,19 +128,30 @@ const AdminHome = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <motion.div
-              key={product.id}
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <img src={product.Images[0]} alt={product.ProductName} className="mb-4 max-h-40 w-full object-cover rounded-md" />
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{product.ProductName}</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">Price: ${product.Price}</p>
-              <p className="text-gray-600 dark:text-gray-400 mb-2">Type: {product.Type}</p>
-              <p className="text-gray-600 dark:text-gray-400">Size: {product.Size}</p>
-            </motion.div>
+          <motion.div
+          key={product.id}
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <img src={product.Images[0]} alt={product.ProductName} className="mb-4 max-h-40 w-full object-cover rounded-md" />
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{product.ProductName}</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-2">Price: ${product.Price}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-2">Type: {product.Type}</p>
+          <div className="text-gray-600 dark:text-gray-400">
+            <p className="font-medium">Sizes and Quantities:</p>
+            <ul className="list-disc pl-5">
+              {product.Sizes && product.Sizes.map((sizeObj, index) => (
+                <li key={index} className="mt-1">
+                  <span className="font-medium">Size:</span> {sizeObj.size}, 
+                  <span className="font-medium"> Quantity:</span> {sizeObj.quantity}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
+        
           ))}
         </div>
 
