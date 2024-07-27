@@ -1,7 +1,6 @@
 "use client";
 import axios from "axios";
 import { motion } from "framer-motion";
-import Image from "next/image"; // Import Image component
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Carousel from "../components/carousel";
@@ -10,12 +9,14 @@ import Navbar from "../components/navbar";
 const Home: React.FC = () => {
   const [products, setProducts] = useState([]);
   const [galleryImages, setGalleryImages] = useState([
-    "https://via.placeholder.com/800x400", // Example image
-    "https://via.placeholder.com/800x400", // Example image
-    "https://via.placeholder.com/800x400", // Example image
+    // Add your gallery images URLs here
+    "../public/g1.jpg", // Example image
+    "../public/g2.jpg", // Example image
+    "../public/g3.jpg", // Example image
   ]);
 
   useEffect(() => {
+    // Fetch actual products from your API
     axios.get("http://localhost:3000/api/users/products")
       .then((response) => {
         setProducts(response.data);
@@ -56,17 +57,11 @@ const Home: React.FC = () => {
           {products.map((product) => (
             <motion.div
               key={product.id}
-              className="relative bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-2xl hover:shadow-2xl transition-shadow duration-300"
+              className="relative bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-2xl hover:shadow-2xl transition-shadow duration-300 drop-shadow-2xl"
               whileHover={{ scale: 1.05 }}
             >
               <div className="w-full flex items-center justify-center" style={{ height: '300px' }}>
-                <Image
-                  src={product.Images[0]}
-                  alt={product.ProductName}
-                  layout="fill"
-                  objectFit="cover"
-                  className="object-contain w-full h-full"
-                />
+                <img src={product.Images[0]} alt={product.ProductName} style={{ objectFit: 'cover' }} className="object-contain w-full h-full" />
               </div>
               <motion.div
                 className="absolute inset-0 bg-black bg-opacity-75 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
@@ -77,7 +72,7 @@ const Home: React.FC = () => {
                   <h2 className="text-2xl font-bold mb-2">{product.ProductName}</h2>
                   <p className="text-lg mb-4">{product.Type}</p>
                   <p className="text-lg font-bold">${typeof product.Price === 'number' ? product.Price.toFixed(2) : "N/A"}</p>
-                  <Link href={`/product/${product.id}`} legacyBehavior>
+                  <Link href={`/pages/product/${product.id}`} legacyBehavior>
                     <a className="text-blue-400 dark:text-blue-600 hover:text-blue-300 dark:hover:text-blue-500 transition">View Product</a>
                   </Link>
                 </div>
