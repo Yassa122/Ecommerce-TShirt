@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
           <Link href="/pages/Cart" legacyBehavior>
             <a className="hover:text-blue-400 transition">Cart</a>
           </Link>
-          <Link href="#contact" legacyBehavior>
+          <Link href="/pages/contact" legacyBehavior>
             <a className="hover:text-blue-400 transition">Contact</a>
           </Link>
           <div className="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
