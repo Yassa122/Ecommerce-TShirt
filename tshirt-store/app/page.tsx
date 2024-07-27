@@ -7,9 +7,18 @@ import { useEffect, useState } from "react";
 import Carousel from "../components/carousel";
 import Navbar from "../components/navbar";
 
+// Define the Product type
+interface Product {
+  id: string;
+  ProductName: string;
+  Price: number;
+  Type: string;
+  Images: string[];
+}
+
 const Home: React.FC = () => {
-  const [products, setProducts] = useState([]);
-  const [galleryImages, setGalleryImages] = useState([
+  const [products, setProducts] = useState<Product[]>([]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([
     "/g1.jpg", // Example image
     "/g2.jpg", // Example image
     "/g3.jpg", // Example image
