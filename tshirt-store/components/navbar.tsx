@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-zinc-900 dark:bg-gray-100 text-white dark:text-black p-4">
+    <nav className="bg-zinc-900 dark:bg-zinc-200 text-white dark:text-black p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" legacyBehavior>
           <a className="text-2xl font-bold">T-Shirt Store</a>
