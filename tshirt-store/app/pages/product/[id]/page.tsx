@@ -1,16 +1,29 @@
-// pages/product/[id]/ProductDetail.tsx
 "use client";
 import Footer from '@/components/footer';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Navbar from '../../../../components/navbar';
 
+interface Size {
+  size: string;
+  quantity: number;
+}
+
+interface Product {
+  id: string;
+  ProductName: string;
+  Type: string;
+  Price: number;
+  Images: string[];
+  Sizes: Size[];
+}
+
 const ProductDetail: React.FC = () => {
-  const [product, setProduct] = useState(null);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [cartMessage, setCartMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [cartMessage, setCartMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
@@ -33,19 +46,19 @@ const ProductDetail: React.FC = () => {
     }
   }, []);
 
-  const handleSizeChange = (size) => {
+  const handleSizeChange = (size: string) => {
     setSelectedSize(size);
   };
 
   const addToCart = () => {
     if (selectedSize) {
-      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const newItem = {
-        id: product.id,
-        ProductName: product.ProductName,
-        Quantity: 1, // You can modify this logic to allow selecting quantity
-        TotalPrice: product.Price,
-        Images: product.Images,
+        id: product!.id,
+        ProductName: product!.ProductName,
+        Quantity: 1,
+        TotalPrice: product!.Price,
+        Images: product!.Images,
         selectedSize,
       };
       cartItems.push(newItem);
@@ -64,14 +77,12 @@ const ProductDetail: React.FC = () => {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <div className="relative w-full h-96  rounded-lg overflow-hidden">
+          <div className="relative w-full h-96 rounded-lg overflow-hidden">
             {product && product.Images && (
               <img src={product.Images[0]} alt={product.ProductName} className="w-full h-full object-contain rounded-lg" />
             )}
           </div>
 
-          {/* Product Details */}
           <div>
             {product ? (
               <>
@@ -82,7 +93,7 @@ const ProductDetail: React.FC = () => {
                   <h3 className="text-lg font-semibold mb-2">Available Sizes:</h3>
                   <div className="flex flex-wrap gap-4">
                     {product.Sizes && product.Sizes.length > 0 ? (
-                      product.Sizes.map((sizeObj, index) => (
+                      product.Sizes.map((sizeObj: Size, index) => (
                         <button
                           key={index}
                           className={`px-4 py-2 border rounded-lg ${selectedSize === sizeObj.size ? 'bg-blue-500 text-white' : 'dark:bg-gray-300 bg-zinc-700'}`}
@@ -110,8 +121,7 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer/>
-
+      <Footer />
     </div>
   );
 };
