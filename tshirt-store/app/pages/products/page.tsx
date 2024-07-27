@@ -2,12 +2,23 @@
 "use client";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/navbar"; // Ensure the path is correct
 
+interface Product {
+  id: number;
+  ProductName: string;
+  Type: string;
+  Price: number;
+  Images: string[];
+  Sizes: { size: string, quantity: number }[]; // Update Sizes property to an array of objects
+}
+
 const ProductPage: React.FC = () => {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch products from the API
@@ -21,6 +32,10 @@ const ProductPage: React.FC = () => {
   const filteredProducts = products.filter(product =>
     product.ProductName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleProductClick = (id: number) => {
+    router.push(`/pages/product/${id}`);
+  };
 
   return (
     <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
@@ -58,19 +73,33 @@ const ProductPage: React.FC = () => {
             filteredProducts.map(product => (
               <motion.div
                 key={product.id}
-                className="bg-zinc-900 dark:bg-white shadow-lg rounded-lg  text-white dark:text-black"
+                className="bg-zinc-900 dark:bg-white shadow-lg rounded-lg text-white dark:text-black cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
+                onClick={() => handleProductClick(product.id)}
               >
                 <img
                   src={product.Images[0]}
                   alt={product.ProductName}
-                  className="w-full  h-64 object-cover rounded-lg"
+                  className="w-full h-64 object-cover rounded-t-lg"
                 />
                 <div className="mt-4 p-6">
                   <h2 className="text-2xl font-semibold">{product.ProductName}</h2>
                   <p className="mt-2 text-gray-400 dark:text-gray-700">{product.Type}</p>
-                  <p className="mt-2 text-lg font-bold">${product.Price}</p>
+                  <p className="mt-2 text-lg font-bold">${product.Price.toFixed(2)}</p>
+                  <div className="mt-2">
+                    <strong>Sizes:</strong>
+                    <div className="flex flex-wrap mt-1">
+                      {product.Sizes.map((sizeObj, index) => (
+                        <span
+                          key={index}
+                          className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-2 py-1 rounded-md mr-2 mb-2"
+                        >
+                          {sizeObj.size} ({sizeObj.quantity})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             ))
