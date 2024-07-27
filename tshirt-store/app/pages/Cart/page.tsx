@@ -1,8 +1,8 @@
 // pages/cart.tsx
 "use client";
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import Navbar from '../../../components/navbar'; // Adjusted import path for the Navbar component
+import Navbar from '../../../components/navbar';
 
 interface CartItem {
   id: string;
@@ -10,41 +10,19 @@ interface CartItem {
   Quantity: number;
   TotalPrice: number;
   Images: string[];
+  selectedSize: string;
 }
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   useEffect(() => {
-    // Fake data for cart items
-    const fakeCartItems: CartItem[] = [
-      {
-        id: '1',
-        ProductName: 'Cool T-shirt',
-        Quantity: 2,
-        TotalPrice: 20.00,
-        Images: ['https://via.placeholder.com/60']
-      },
-      {
-        id: '2',
-        ProductName: 'Comfy Hoodie',
-        Quantity: 1,
-        TotalPrice: 35.00,
-        Images: ['https://via.placeholder.com/60']
-      },
-      {
-        id: '3',
-        ProductName: 'Stylish Jeans',
-        Quantity: 1,
-        TotalPrice: 45.00,
-        Images: ['https://via.placeholder.com/60']
-      }
-    ];
-
-    setCartItems(fakeCartItems);
-    calculateTotal(fakeCartItems);
+    // Fetch cart items from local storage
+    const items = JSON.parse(localStorage.getItem('cartItems')) || [];
+    setCartItems(items);
+    calculateTotal(items);
   }, []);
 
   const calculateTotal = (items: CartItem[]) => {
@@ -55,6 +33,7 @@ const CartPage: React.FC = () => {
   const removeItem = (id: string) => {
     setCartItems(prevItems => {
       const updatedItems = prevItems.filter(item => item.id !== id);
+      localStorage.setItem('cartItems', JSON.stringify(updatedItems));
       calculateTotal(updatedItems);
       return updatedItems;
     });
@@ -64,15 +43,15 @@ const CartPage: React.FC = () => {
     <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
       <Navbar />
       <div className="py-12">
-        <div className="max-w-md mx-auto bg-zinc-900 dark:bg-gray-200 shadow-lg rounded-lg md:max-w-5xl">
+        <div className="max-w-full lg:max-w-5xl mx-auto bg-zinc-900 dark:bg-gray-200 shadow-lg rounded-lg">
           <div className="md:flex">
             <div className="w-full p-4 px-5 py-5">
-              <div className="md:grid md:grid-cols-3 gap-2">
+              <div className="md:grid md:grid-cols-3 gap-4">
                 <div className="col-span-2 p-5">
                   <h1 className="text-xl font-medium">Shopping Cart</h1>
 
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  {cartItems.length > 0 ? cartItems.map(item => (
+                    <div key={item.id} className="flex flex-col md:flex-row justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center">
                         <img
                           src={item.Images[0]}
@@ -85,8 +64,8 @@ const CartPage: React.FC = () => {
                           <span className="text-xs font-light text-gray-400">#{item.id}</span>
                         </div>
                       </div>
-                      <div className="flex justify-center items-center">
-                        <div className="pr-8 flex">
+                      <div className="flex flex-col md:flex-row justify-center items-center mt-4 md:mt-0">
+                        <div className="pr-8 flex items-center">
                           <span className="font-semibold cursor-pointer">-</span>
                           <input
                             type="text"
@@ -96,20 +75,24 @@ const CartPage: React.FC = () => {
                           />
                           <span className="font-semibold cursor-pointer">+</span>
                         </div>
-                        <div className="pr-8">
+                        <div className="pr-8 mt-2 md:mt-0">
                           <span className="text-xs font-medium">${item.TotalPrice.toFixed(2)}</span>
                         </div>
-                        <div>
+                        <div className="mt-2 md:mt-0">
                           <i className="fa fa-close text-xs font-medium cursor-pointer" onClick={() => removeItem(item.id)}></i>
                         </div>
                       </div>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">Your cart is empty.</p>
+                    </div>
+                  )}
 
-                  <div className="flex justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center">
+                  <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-4 md:mb-0">
                       <i className="fa fa-arrow-left text-sm pr-2"></i>
-                      <span className="text-md font-medium text-blue-500 cursor-pointer">Continue Shopping</span>
+                      <span className="text-md font-medium text-blue-500 cursor-pointer" onClick={() => router.push('/')}>Continue Shopping</span>
                     </div>
                     <div className="flex justify-center items-end">
                       <span className="text-sm font-medium text-gray-400 mr-1">Subtotal:</span>
@@ -119,12 +102,12 @@ const CartPage: React.FC = () => {
                 </div>
 
                 {/* Checkout Section */}
-                <div className="p-5 bg-gray-800 dark:bg-gray-300 rounded overflow-visible ">
+                <div className="p-5 bg-gray-800 dark:bg-gray-300 rounded overflow-visible">
                   <span className="text-xl font-medium text-gray-100 dark:text-black block pb-3">Checkout</span>
                   <p className="text-gray-400 dark:text-black">Cash on delivery only</p>
                   <button 
                     className="h-12 w-full bg-blue-500 rounded focus:outline-none text-white hover:bg-blue-600 mt-4"
-                    onClick={() => router.push("/pages/checkout")} // Redirect to checkout page
+                    onClick={() => router.push("/pages/checkout")}
                   >
                     Proceed to Checkout
                   </button>
