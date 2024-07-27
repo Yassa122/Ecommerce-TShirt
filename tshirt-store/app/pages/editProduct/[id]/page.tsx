@@ -5,15 +5,29 @@ import { useEffect, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Sidebar from '../../../../components/sidebar';
 
+interface Size {
+  size: string;
+  quantity: number;
+}
+
+interface Product {
+  id: string;
+  ProductName: string;
+  Type: string;
+  Price: number;
+  Images: string[];
+  Sizes: Size[];
+}
+
 const ProductDetail: React.FC = () => {
-  const [product, setProduct] = useState<any>(null);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [cartMessage, setCartMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editing, setEditing] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [cartMessage, setCartMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
@@ -34,32 +48,36 @@ const ProductDetail: React.FC = () => {
     }
   }, []);
 
-  const handleInputChange = (field, value) => {
-    setProduct(prevProduct => ({
-      ...prevProduct,
-      [field]: value,
-    }));
+  const handleInputChange = (field: keyof Product, value: string | number) => {
+    if (product) {
+      setProduct(prevProduct => ({
+        ...prevProduct!,
+        [field]: value,
+      }));
+    }
   };
 
-  const handleSizeChange = (index, field, value) => {
-    const updatedSizes = product.Sizes.map((size, i) =>
-      i === index ? { ...size, [field]: value } : size
-    );
-    setProduct(prevProduct => ({
-      ...prevProduct,
-      Sizes: updatedSizes,
-    }));
+  const handleSizeChange = (index: number, field: keyof Size, value: string | number) => {
+    if (product) {
+      const updatedSizes = product.Sizes.map((size, i) =>
+        i === index ? { ...size, [field]: value } : size
+      );
+      setProduct(prevProduct => ({
+        ...prevProduct!,
+        Sizes: updatedSizes,
+      }));
+    }
   };
 
   const addToCart = () => {
     if (selectedSize) {
-      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const newItem = {
-        id: product.id,
-        ProductName: product.ProductName,
+        id: product!.id,
+        ProductName: product!.ProductName,
         Quantity: 1,
-        TotalPrice: product.Price,
-        Images: product.Images,
+        TotalPrice: product!.Price,
+        Images: product!.Images,
         selectedSize,
       };
       cartItems.push(newItem);
@@ -74,7 +92,7 @@ const ProductDetail: React.FC = () => {
     setEditing(!editing);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     // Implement your logic for handling delete
   };
 
