@@ -1,5 +1,6 @@
 // pages/product/[id]/ProductDetail.tsx
 "use client";
+import Footer from '@/components/footer';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Navbar from '../../../../components/navbar';
@@ -64,7 +65,7 @@ const ProductDetail: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="relative w-full h-96 dark:bg-gray-800 rounded-lg overflow-hidden">
+          <div className="relative w-full h-96  rounded-lg overflow-hidden">
             {product && product.Images && (
               <img src={product.Images[0]} alt={product.ProductName} className="w-full h-full object-contain rounded-lg" />
             )}
@@ -84,7 +85,7 @@ const ProductDetail: React.FC = () => {
                       product.Sizes.map((sizeObj, index) => (
                         <button
                           key={index}
-                          className={`px-4 py-2 border rounded-lg ${selectedSize === sizeObj.size ? 'bg-blue-500 text-white' : 'bg-gray-700 dark:bg-gray-700'}`}
+                          className={`px-4 py-2 border rounded-lg ${selectedSize === sizeObj.size ? 'bg-blue-500 text-white' : 'dark:bg-gray-300 bg-zinc-700'}`}
                           onClick={() => handleSizeChange(sizeObj.size)}
                         >
                           {sizeObj.size} ({sizeObj.quantity})
@@ -109,6 +110,8 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer/>
+
     </div>
   );
 };
