@@ -20,38 +20,17 @@ const cairoAreas = [
   // Add more areas as needed
 ];
 
-const fakeCartItems = [
-  {
-    id: '1',
-    ProductName: 'Cool T-shirt',
-    Quantity: 2,
-    TotalPrice: 20.00,
-    Images: ['https://via.placeholder.com/60']
-  },
-  {
-    id: '2',
-    ProductName: 'Comfy Hoodie',
-    Quantity: 1,
-    TotalPrice: 35.00,
-    Images: ['https://via.placeholder.com/60']
-  },
-  {
-    id: '3',
-    ProductName: 'Stylish Jeans',
-    Quantity: 1,
-    TotalPrice: 45.00,
-    Images: ['https://via.placeholder.com/60']
-  }
-];
-
 const CheckoutPage: React.FC = () => {
   const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", postalCode: "" });
-  const [cartItems, setCartItems] = useState(fakeCartItems);
+  const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
-    calculateTotal(fakeCartItems);
+    // Fetch cart items from local storage
+    const items = JSON.parse(localStorage.getItem('cartItems')) || [];
+    setCartItems(items);
+    calculateTotal(items);
   }, []);
 
   const handleShippingChange = (e) => {
@@ -66,9 +45,10 @@ const CheckoutPage: React.FC = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo })
+    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems })
       .then(response => {
         alert("Order placed successfully!");
+        localStorage.removeItem('cartItems'); // Clear the cart
         router.push("/order-confirmation");
       })
       .catch(error => console.error("Error processing checkout:", error));
@@ -128,7 +108,7 @@ const CheckoutPage: React.FC = () => {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-300 dark:text-gray-700">Email Address</label>
+              <label className="block text-gray-300 dark:text-gray-700">Postal Code</label>
               <input
                 type="text"
                 name="postalCode"
@@ -138,6 +118,12 @@ const CheckoutPage: React.FC = () => {
                 required
               />
             </div>
+            <button 
+              type="submit"
+              className="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition w-full"
+            >
+              Complete Order
+            </button>
           </motion.form>
 
           {/* Order Summary */}
@@ -177,14 +163,6 @@ const CheckoutPage: React.FC = () => {
             </div>
             <div className="text-right mt-8">
               <p className="text-gray-400 mb-4">Payment will be made upon delivery (Cash on Delivery).</p>
-              <motion.button
-                type="submit"
-                className="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Complete Order
-              </motion.button>
             </div>
           </motion.div>
         </motion.div>
