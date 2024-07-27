@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/navbar"; // Ensure the path is correct
+import Footer from "@/components/footer";
 
 interface Product {
   id: number;
@@ -115,6 +116,8 @@ const ProductPage: React.FC = () => {
           )}
         </motion.div>
       </div>
+      <Footer/>
+
     </div>
   );
 };
