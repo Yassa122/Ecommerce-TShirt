@@ -1,19 +1,18 @@
 "use client";
+import Footer from "@/components/footer";
 import axios from "axios";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Carousel from "../components/carousel";
 import Navbar from "../components/navbar";
-import Footer from "@/components/footer";
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState([]);
   const [galleryImages, setGalleryImages] = useState([
-    // Add your gallery images URLs here
-    "../public/g1.jpg", // Example image
-    "../public/g2.jpg", // Example image
-    "../public/g3.jpg", // Example image
+    "/g1.jpg", // Example image
+    "/g2.jpg", // Example image
+    "/g3.jpg", // Example image
   ]);
 
   useEffect(() => {
@@ -84,7 +83,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Footer Section */}
-      <Footer/>
+      <Footer />
     </div>
   );
 };
