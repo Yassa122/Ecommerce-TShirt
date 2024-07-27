@@ -62,6 +62,84 @@ export const addProduct = async (req: Request, res: Response) => {
   });
 };
 
+// Function to get a product by ID
+export const getProductById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const productRef = db.collection('products').doc(id);
+    const productDoc = await productRef.get();
+
+    if (!productDoc.exists) {
+      return res.status(404).send('Product not found.');
+    }
+
+    res.status(200).json({ id: productDoc.id, ...productDoc.data() });
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
+
+// Function to edit a product by ID
+export const editProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { ProductName, Price, Type, Sizes } = req.body;
+
+  try {
+    const productRef = db.collection('products').doc(id);
+    const productDoc = await productRef.get();
+
+    if (!productDoc.exists) {
+      return res.status(404).send('Product not found.');
+    }
+
+    // Parse Sizes if provided
+    let parsedSizes;
+    if (Sizes) {
+      try {
+        parsedSizes = JSON.parse(Sizes);
+      } catch (parseError) {
+        return res.status(400).send('Invalid Sizes format. Expected a JSON string.');
+      }
+
+      if (!Array.isArray(parsedSizes)) {
+        return res.status(400).send('Sizes should be an array.');
+      }
+    }
+
+    await productRef.update({
+      ProductName,
+      Price: parseFloat(Price),
+      Type,
+      ...(parsedSizes && { Sizes: parsedSizes }),
+    });
+
+    res.status(200).send('Product updated successfully.');
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
+
+// Function to delete a product by ID
+export const deleteProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const productRef = db.collection('products').doc(id);
+    const productDoc = await productRef.get();
+
+    if (!productDoc.exists) {
+      return res.status(404).send('Product not found.');
+    }
+
+    await productRef.delete();
+    res.status(200).send('Product deleted successfully.');
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
+
+
 // Function to get all products
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
