@@ -21,7 +21,7 @@ export const addProduct = async (req: Request, res: Response) => {
       return res.status(400).send('No file uploaded.');
     }
 
-    const { ProductName, Price, Size, Type } = req.body;
+    const { ProductName, Price, Type, Sizes } = req.body;
     const file = req.file;
     const imageName = `${Date.now()}-${file.originalname}`;
     const fileUpload = storage.file(imageName);
@@ -35,12 +35,24 @@ export const addProduct = async (req: Request, res: Response) => {
 
       const fileUrl = `https://storage.googleapis.com/${storage.name}/${fileUpload.name}`;
 
+      // Parse Sizes from JSON string to an array of objects
+      let parsedSizes;
+      try {
+        parsedSizes = JSON.parse(Sizes);
+      } catch (parseError) {
+        return res.status(400).send('Invalid Sizes format. Expected a JSON string.');
+      }
+
+      if (!Array.isArray(parsedSizes)) {
+        return res.status(400).send('Sizes should be an array.');
+      }
+
       const productRef = await db.collection('products').add({
         Images: [fileUrl],
         ProductName,
-        Price,
-        Size,
-        Type
+        Price: parseFloat(Price),
+        Sizes: parsedSizes,
+        Type,
       });
 
       res.status(201).send(`Product added with ID: ${productRef.id}`);
