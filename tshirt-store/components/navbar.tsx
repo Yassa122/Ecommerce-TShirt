@@ -85,8 +85,8 @@ const Navbar: React.FC = () => {
           <Link href="pages/products" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Products</a>
           </Link>
-          <Link href="#testimonials" legacyBehavior>
-            <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Testimonials</a>
+          <Link href="/pages/Cart" legacyBehavior>
+            <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Cart</a>
           </Link>
           <Link href="#contact" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Contact</a>
