@@ -9,7 +9,7 @@ const AddProduct = () => {
   const [type, setType] = useState("");
   const [sizes, setSizes] = useState([{ size: "Select Size", quantity: "" }]);
   const [image, setImage] = useState<File | null>(null);
-  const [imageName, setImageName] = useState("No file chosen"); // To display selected file name
+  const [imageName, setImageName] = useState("No file chosen");
   const router = useRouter();
 
   const basicSizes = ["Select Size", "XS", "S", "M", "L", "XL", "XXL"];
@@ -17,7 +17,7 @@ const AddProduct = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setImage(event.target.files[0]);
-      setImageName(event.target.files[0].name); // Set the file name
+      setImageName(event.target.files[0].name);
     }
   };
 
@@ -46,10 +46,8 @@ const AddProduct = () => {
     formData.append("Type", type);
     formData.append("image", image);
 
-    sizes.forEach((sizeObj, index) => {
-      formData.append(`Sizes[${index}][size]`, sizeObj.size);
-      formData.append(`Sizes[${index}][quantity]`, sizeObj.quantity);
-    });
+    // Convert sizes to JSON string
+    formData.append("Sizes", JSON.stringify(sizes));
 
     try {
       await axios.post("http://localhost:3000/api/admin/products", formData, {
@@ -66,9 +64,9 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4 md:p-6">
+    <div className="bg-gray-100 dark:bg-zinc-900 rounded-lg p-4 md:p-6">
       <div className="container mx-auto">
-        <div className="max-w-md mx-auto bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg">
+        <div className="max-w-md mx-auto bg-white dark:bg-zinc-800 p-4 md:p-6 rounded-lg shadow-lg">
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="mb-4">
               <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">Product Name</label>
@@ -77,7 +75,7 @@ const AddProduct = () => {
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700"
               />
             </div>
             <div className="mb-4">
@@ -87,7 +85,7 @@ const AddProduct = () => {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-zinc rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700"
               />
             </div>
             <div className="mb-4">
@@ -97,7 +95,7 @@ const AddProduct = () => {
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700"
               />
             </div>
             <div className="mb-4">
@@ -107,7 +105,7 @@ const AddProduct = () => {
                   <select
                     value={sizeObj.size}
                     onChange={(e) => handleSizeChange(index, "size", e.target.value)}
-                    className="flex-grow p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
+                    className="flex-grow p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
                   >
                     {basicSizes.map((size) => (
                       <option key={size} value={size}>{size}</option>
@@ -118,7 +116,7 @@ const AddProduct = () => {
                     placeholder="Quantity"
                     value={sizeObj.quantity}
                     onChange={(e) => handleSizeChange(index, "quantity", e.target.value)}
-                    className="md:w-1/4 p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
+                    className="md:w-1/4 p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
                   />
                 </div>
               ))}
