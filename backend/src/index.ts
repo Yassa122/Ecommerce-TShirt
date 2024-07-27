@@ -20,7 +20,7 @@ const port = process.env.PORT || 3000;
 console.log('Registering routes');
 app.use(cors({
   origin: 'http://localhost:3001', // Allow requests from this origin
-  methods: 'GET,POST', // Allow only these methods
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization', // Allow only these headers
 }));
 
