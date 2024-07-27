@@ -3,9 +3,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 const images = [
-  { id: 1, image: 'g1.jpg' },
-  { id: 2, image: 'g2.jpg' },
-  { id: 3, image: 'g3.jpg' },
+  { id: 1, image: '/g1.jpg' },
+  { id: 2, image: '/g2.jpg' },
+  { id: 3, image: '/g3.jpg' },
 ];
 
 const Carousel: React.FC = () => {
