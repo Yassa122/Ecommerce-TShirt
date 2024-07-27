@@ -1,10 +1,18 @@
-// pages/checkout.tsx
 "use client";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/navbar"; // Import the Navbar component
+
+// Define the type for cart items
+interface CartItem {
+  id: string;
+  ProductName: string;
+  Quantity: number;
+  TotalPrice: number;
+  Images: string[];
+}
 
 const cairoAreas = [
   "Downtown",
@@ -22,27 +30,27 @@ const cairoAreas = [
 
 const CheckoutPage: React.FC = () => {
   const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", postalCode: "" });
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Set the correct type
   const [totalPrice, setTotalPrice] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     // Fetch cart items from local storage
-    const items = JSON.parse(localStorage.getItem('cartItems')) || [];
+    const items: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCartItems(items);
     calculateTotal(items);
   }, []);
 
-  const handleShippingChange = (e) => {
+  const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
   };
 
-  const calculateTotal = (items) => {
+  const calculateTotal = (items: CartItem[]) => {
     const total = items.reduce((sum, item) => sum + item.Quantity * item.TotalPrice, 0);
     setTotalPrice(total);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
     axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems })
