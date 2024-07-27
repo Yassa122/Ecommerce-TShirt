@@ -47,7 +47,7 @@ const ProductList = () => {
   };
 
   return (
-    <div className={`min-h-screen flex ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`min-h-screen flex ${darkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
       <Sidebar
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -77,8 +77,8 @@ const ProductList = () => {
           </div>
 
           <div className="mt-12 shadow-md border rounded-lg overflow-x-auto">
-            <table className="min-w-full table-auto text-sm text-left">
-              <thead className={`font-medium border-b ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-50 text-gray-600'}`}>
+            <table className={`min-w-full table-auto text-sm text-left ${darkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+              <thead className={`font-medium border-b ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-neutral-100 text-neutral-700'}`}>
                 <tr>
                   <th className="py-3 px-6">Product Image</th>
                   <th className="py-3 px-6">Product Name</th>
@@ -88,9 +88,9 @@ const ProductList = () => {
                   <th className="py-3 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className={`divide-y ${darkMode ? 'divide-gray-600' : 'divide-gray-200'}`}>
+              <tbody className={`divide-y ${darkMode ? 'divide-neutral-700' : 'divide-neutral-200'}`}>
                 {products.map((product, idx) => (
-                  <tr key={product.id} className="hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                  <tr key={product.id} className={`hover:bg-neutral-100 dark:hover:bg-neutral-700 transition ${darkMode ? 'bg-neutral-900' : 'bg-white'}`}>
                     <td className="px-6 py-4 whitespace-nowrap overflow-ellipsis overflow-hidden">
                       <img src={product.Images[0]} alt={product.ProductName} className="w-12 h-12 object-cover rounded-full" />
                     </td>
@@ -101,7 +101,7 @@ const ProductList = () => {
                           name="ProductName"
                           value={editProduct.ProductName}
                           onChange={handleChange}
-                          className="border rounded-lg p-2 w-full"
+                          className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
                       ) : (
                         product.ProductName
@@ -114,7 +114,7 @@ const ProductList = () => {
                           name="Price"
                           value={editProduct.Price}
                           onChange={handleChange}
-                          className="border rounded-lg p-2 w-full"
+                          className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
                       ) : (
                         `$${product.Price}`
@@ -127,7 +127,7 @@ const ProductList = () => {
                           name="Type"
                           value={editProduct.Type}
                           onChange={handleChange}
-                          className="border rounded-lg p-2 w-full"
+                          className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
                       ) : (
                         product.Type
@@ -144,14 +144,14 @@ const ProductList = () => {
                       {editIndex === idx ? (
                         <button
                           onClick={handleSave}
-                          className="py-2 px-4 font-medium text-green-600 hover:text-green-500"
+                          className="py-2 px-4 font-medium text-green-500 hover:text-green-400"
                         >
                           Save
                         </button>
                       ) : (
                         <button
                           onClick={() => handleEdit(idx)}
-                          className="py-2 px-4 font-medium text-indigo-600 hover:text-indigo-500"
+                          className="py-2 px-4 font-medium text-indigo-500 hover:text-indigo-400"
                         >
                           Edit
                         </button>
@@ -172,7 +172,7 @@ const ProductList = () => {
               exit={{ opacity: 0 }}
             >
               <motion.div 
-                className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg relative"
+                className={`bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg relative`}
                 initial={{ y: '-100vh' }}
                 animate={{ y: 0 }}
                 exit={{ y: '-100vh' }}
@@ -188,7 +188,6 @@ const ProductList = () => {
               </motion.div>
             </motion.div>
           )}
-
         </div>
       </main>
     </div>
