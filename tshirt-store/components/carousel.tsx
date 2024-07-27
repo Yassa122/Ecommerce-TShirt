@@ -2,13 +2,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const images = [
-  { id: 1, image: '/g1.jpg' },
-  { id: 2, image: '/g2.jpg' },
-  { id: 3, image: '/g3.jpg' },
-];
+interface CarouselProps {
+  images: string[];
+  autoPlay: boolean;
+}
 
-const Carousel: React.FC = () => {
+const Carousel: React.FC<CarouselProps> = ({ images, autoPlay }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = () => {
@@ -20,9 +19,11 @@ const Carousel: React.FC = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
-    return () => clearInterval(interval); // Clean up the interval on unmount
-  }, []);
+    if (autoPlay) {
+      const interval = setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
+      return () => clearInterval(interval); // Clean up the interval on unmount
+    }
+  }, [autoPlay]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -30,14 +31,14 @@ const Carousel: React.FC = () => {
         {images.map((image, index) => (
           index === currentIndex && (
             <motion.div
-              key={image.id}
+              key={image}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
               className="absolute w-full h-full"
             >
-              <img src={image.image} alt={`Gallery Image ${image.id}`} className="w-full h-full object-contain" />
+              <img src={image} alt={`Gallery Image ${index}`} className="w-full h-full object-contain" />
             </motion.div>
           )
         ))}
