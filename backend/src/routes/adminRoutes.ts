@@ -1,10 +1,14 @@
 import express from 'express';
-import { addProduct, getAllProducts } from '../controllers/adminController';
+import { addProduct, deleteProduct, editProduct, getAllProducts, getProductById } from '../controllers/adminController';
 const adminRoutes = express.Router();
 
 //Use adminAuthMiddleware to protect admin routes
 adminRoutes.post('/products',  addProduct);
 adminRoutes.get('/getAllProducts',  getAllProducts);
+adminRoutes.put('/updateProduct',  editProduct);
+adminRoutes.delete('/deleteProduct/:id',  deleteProduct);
+adminRoutes.get('/product/:id',  getProductById);
+
 
 // adminRoutes.get('/orders', adminAuthMiddleware, getOrders);
 // adminRoutes.post('/orders/respond', adminAuthMiddleware, respondToOrder);
