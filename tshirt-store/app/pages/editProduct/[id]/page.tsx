@@ -33,7 +33,7 @@ const ProductDetail: React.FC = () => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
 
     if (id) {
-      axios.get(`http://localhost:3000/api/users/products/${id}`)
+      axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);

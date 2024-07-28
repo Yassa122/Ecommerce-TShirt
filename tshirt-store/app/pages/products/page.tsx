@@ -1,11 +1,11 @@
 // pages/products.tsx
 "use client";
+import Footer from "@/components/footer";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/navbar"; // Ensure the path is correct
-import Footer from "@/components/footer";
 
 interface Product {
   id: number;
@@ -23,7 +23,7 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch products from the API
-    axios.get("http://localhost:3000/api/users/products")
+    axios.get("${process.env.NEXT_PUBLIC_API_BASE_URL}api/users/products")
       .then(response => {
         setProducts(response.data);
       })

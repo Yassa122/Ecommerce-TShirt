@@ -53,7 +53,7 @@ const CheckoutPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems })
+    axios.post("${process.env.NEXT_PUBLIC_API_BASE_URL}api/users/checkout", { shippingInfo, cartItems })
       .then(response => {
         alert("Order placed successfully!");
         localStorage.removeItem('cartItems'); // Clear the cart

@@ -17,9 +17,12 @@ app.use(cookieParser()); // Parse cookies
 
 const port = process.env.PORT || 3000;
 
+// Get CORS origin from environment variable
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3001';
+
 console.log('Registering routes');
 app.use(cors({
-  origin: 'http://localhost:3001', // Allow requests from this origin
+  origin: corsOrigin, // Use the CORS origin from environment variables
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization', // Allow only these headers
 }));
