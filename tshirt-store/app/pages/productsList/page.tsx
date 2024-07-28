@@ -1,7 +1,9 @@
+// pages/productsList.tsx
 "use client";
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { HiMenuAlt1 } from 'react-icons/hi'; // Importing an icon for the sidebar toggle button
 import Sidebar from '../../../components/sidebar';
 import AddProduct from '../addProduct/page';
 
@@ -64,8 +66,12 @@ const ProductList = () => {
     setShowAddProductModal(!showAddProductModal);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <div className={`min-h-screen flex ${darkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`min-h-screen flex flex-col lg:flex-row ${darkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
       <Sidebar
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -73,9 +79,17 @@ const ProductList = () => {
         setSidebarOpen={setSidebarOpen}
       />
 
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 relative">
+        <div className="absolute top-4 left-4 md:hidden">
+          <button 
+            onClick={toggleSidebar} 
+            className="text-white bg-blue-600 p-2 rounded-full shadow-lg focus:outline-none"
+          >
+            <HiMenuAlt1 size={24} />
+          </button>
+        </div>
         <div className="max-w-screen-xl mx-auto px-4 md:px-8">
-          <div className="items-start justify-between md:flex mt-8">
+          <div className="flex flex-col md:flex-row items-start justify-between mt-8">
             <div className="max-w-lg">
               <h3 className="text-2xl font-bold">
                 Products
