@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
           <Link href="/pages/Cart" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Cart</a>
           </Link>
-          <Link href="#contact" legacyBehavior>
+          <Link href="/pages/contact" legacyBehavior>
             <a className="block px-4 py-2 hover:bg-gray-700 dark:hover:bg-gray-200">Contact</a>
           </Link>
           <div className="flex items-center justify-center my-4">
