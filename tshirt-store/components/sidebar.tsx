@@ -38,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkMode, setDarkMode, sidebarOpen, s
         <a href="/pages/gallery" className={`block flex items-center ${darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-blue-500'}`}>
           <FaImage className="mr-2" /> Gallery
         </a>
-        <a href="/admin/orders" className={`block flex items-center ${darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-blue-500'}`}>
+        <a href="/pages/orders" className={`block flex items-center ${darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-blue-500'}`}>
           <FaShoppingCart className="mr-2" /> Orders
         </a>
         <a href="/admin/settings" className={`block flex items-center ${darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-blue-500'}`}>
