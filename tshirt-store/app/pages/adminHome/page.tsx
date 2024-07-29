@@ -51,7 +51,7 @@ const AdminHome = () => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
 
-    axios.get("`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/getAllProducts").then((response) => {
+    axios.get("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/getAllProducts").then((response) => {
       setProducts(response.data);
       setFilteredProducts(response.data);
     });
@@ -90,7 +90,7 @@ const AdminHome = () => {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(``${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/deleteProduct/${id}`);
+        await axios.delete(${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");
