@@ -50,7 +50,7 @@ const AddProduct = () => {
     formData.append("Sizes", JSON.stringify(sizes));
 
     try {
-      await axios.post("${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/products", formData, {
+      await axios.post("${process.env.NEXT_PUBLIC_API_URL}/api/admin/products", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -28,7 +28,7 @@ const ProductDetail: React.FC = () => {
 
     if (id) {
       console.log(`Fetching product details for ID: ${id}`);
-      axios.get(${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/products/${id}`)
+      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);

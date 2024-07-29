@@ -31,7 +31,7 @@ const ProductList = () => {
 
   useEffect(() => {
     // Fetch products from the API
-    axios.get('${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/getAllProducts')
+    axios.get('${process.env.NEXT_PUBLIC_API_URL}/api/admin/getAllProducts')
       .then(response => {
         setProducts(response.data);
       })
