@@ -23,7 +23,7 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch products from the API
-    axios.get("${process.env.NEXT_PUBLIC_API_URL}/api/users/products")
+    axios.get("https://amaria-backend.vercel.app/api/users/products")
       .then(response => {
         setProducts(response.data);
       })
