@@ -1,4 +1,5 @@
 "use client";
+import Sidebar from "@/components/sidebar";
 import axios from "axios";
 import {
   CategoryScale,
@@ -10,8 +11,12 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import AddProduct from "../addProduct/page";
 
 ChartJS.register(
   CategoryScale,
