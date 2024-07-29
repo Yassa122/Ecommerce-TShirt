@@ -1,6 +1,10 @@
 "use client";
+import Sidebar from '@/components/sidebar';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa6';
 
 interface Size {
   size: string;
