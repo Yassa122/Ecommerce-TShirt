@@ -1,4 +1,5 @@
 "use client";
+import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
