@@ -29,7 +29,7 @@ app.use((0, cookie_parser_1.default)()); // Parse cookies
 const port = process.env.PORT || 3000;
 console.log('Registering routes');
 app.use((0, cors_1.default)({
-    origin: 'amaria-backend.vercel.app',
+    origin: 'http://localhost:3001',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type,Authorization', // Allow only these headers
 }));
