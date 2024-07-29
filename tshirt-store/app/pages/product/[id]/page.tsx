@@ -1,8 +1,6 @@
 "use client";
-import Footer from '@/components/footer';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import Navbar from '../../../../components/navbar';
 
 interface Size {
   size: string;
@@ -30,7 +28,7 @@ const ProductDetail: React.FC = () => {
 
     if (id) {
       console.log(`Fetching product details for ID: ${id}`);
-      axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}api/users/products/${id}`)
+      axios.get(``${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);

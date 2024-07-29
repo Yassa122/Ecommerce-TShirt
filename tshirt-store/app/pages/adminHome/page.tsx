@@ -10,13 +10,8 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Sidebar from '../../../components/sidebar';
-import AddProduct from "../addProduct/page";
 
 ChartJS.register(
   CategoryScale,
@@ -56,7 +51,7 @@ const AdminHome = () => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
 
-    axios.get("${process.env.NEXT_PUBLIC_API_BASE_URL}api/admin/getAllProducts").then((response) => {
+    axios.get("`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/getAllProducts").then((response) => {
       setProducts(response.data);
       setFilteredProducts(response.data);
     });
@@ -95,7 +90,7 @@ const AdminHome = () => {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_BASE_URL}api/admin/deleteProduct/${id}`);
+        await axios.delete(``${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");

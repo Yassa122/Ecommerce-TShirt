@@ -1,9 +1,6 @@
 "use client";
 import axios from 'axios';
-import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Sidebar from '../../../../components/sidebar';
 
 interface Size {
   size: string;
@@ -33,7 +30,7 @@ const ProductDetail: React.FC = () => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
 
     if (id) {
-      axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}api/users/products/${id}`)
+      axios.get(``${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);
