@@ -1,7 +1,7 @@
-// pages/gallery.tsx
 "use client";
 import { useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
+import { HiMenuAlt1 } from 'react-icons/hi';
 import Sidebar from '../../../components/sidebar';
 
 const Gallery = () => {
@@ -16,6 +16,10 @@ const Gallery = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className={`min-h-screen flex ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
       <Sidebar
@@ -24,6 +28,14 @@ const Gallery = () => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
+      <div className="absolute top-4 left-4 md:hidden">
+        <button 
+          onClick={toggleSidebar} 
+          className="text-white bg-blue-600 p-2 rounded-full shadow-lg focus:outline-none"
+        >
+          <HiMenuAlt1 size={24} />
+        </button>
+      </div>
       <main className="flex-1 p-8">
         <div className="max-w-screen-xl mx-auto px-4 md:px-8">
           <div className="items-start justify-between md:flex mt-8">
