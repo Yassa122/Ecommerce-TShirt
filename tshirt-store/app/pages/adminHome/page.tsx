@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
 import AddProduct from "../addProduct/page";
 
 ChartJS.register(
@@ -95,7 +96,7 @@ const AdminHome = () => {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
+        await axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");
@@ -122,6 +123,10 @@ const AdminHome = () => {
     setEditing(!editing);
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
       <Sidebar
@@ -130,12 +135,14 @@ const AdminHome = () => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="md:hidden block p-4 bg-gray-700 text-white dark:bg-gray-900 dark:text-gray-300 focus:outline-none z-50 absolute top-4 left-4"
-      >
-        Menu
-      </button>
+      <div className="absolute top-4 left-4 md:hidden">
+        <button 
+          onClick={toggleSidebar} 
+          className="text-white bg-blue-600 p-2 rounded-full shadow-lg focus:outline-none"
+        >
+          <HiMenuAlt1 size={24} />
+        </button>
+      </div>
 
       <main className="flex-1 p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-8">
