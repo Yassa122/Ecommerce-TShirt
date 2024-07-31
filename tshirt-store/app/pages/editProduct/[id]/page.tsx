@@ -34,7 +34,7 @@ const ProductDetail: React.FC = () => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
 
     if (id) {
-      axios.get(`http://localhost:3000/api/users/products/${id}`)
+      axios.get(`https://amaria-backend.vercel.app/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);

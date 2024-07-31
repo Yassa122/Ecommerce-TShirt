@@ -30,10 +30,10 @@ const ProductList = () => {
   const [showAddProductModal, setShowAddProductModal] = useState<boolean>(false);
 
 
-  //http://localhost:3000/
+  //https://amaria-backend.vercel.app/
   useEffect(() => {
     // Fetch products from the API
-    axios.get('http://localhost:3000/api/admin/getAllProducts')
+    axios.get('https://amaria-backend.vercel.app/api/admin/getAllProducts')
       .then(response => {
         setProducts(response.data);
       })

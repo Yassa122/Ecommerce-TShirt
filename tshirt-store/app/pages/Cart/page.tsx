@@ -2,9 +2,9 @@
 "use client";
 import Sidebar from '@/components/sidebar';
 import axios from 'axios';
+import { Chart, registerables } from 'chart.js';
 import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
 interface OrderItem {
@@ -31,7 +31,7 @@ const OrdersPage: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/admin/orders');
+        const response = await axios.get('https://amaria-backend.vercel.app/api/admin/orders');
         const fetchedOrders = response.data.map((doc: any) => {
           const items = [{
             ProductName: doc.ProductName,

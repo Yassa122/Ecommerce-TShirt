@@ -71,7 +71,7 @@ const CheckoutPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems })
+    axios.post("https://amaria-backend.vercel.app/api/users/checkout", { shippingInfo, cartItems })
       .then(response => {
         alert("Order placed successfully!");
         localStorage.removeItem('cartItems'); // Clear the cart
