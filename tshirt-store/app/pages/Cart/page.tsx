@@ -32,8 +32,8 @@ const CartPage: React.FC = () => {
   const updateItemQuantity = (id: string, quantity: number) => {
     setCartItems(prevItems => {
       const updatedItems = prevItems.map(item =>
-        item.id === id ? { ...item, Quantity: item.Quantity + quantity } : item
-      ).filter(item => item.Quantity > 0);
+        item.id === id ? { ...item, Quantity: Math.max(1, item.Quantity + quantity) } : item
+      );
       localStorage.setItem('cartItems', JSON.stringify(updatedItems));
       calculateTotal(updatedItems);
       return updatedItems;
@@ -47,12 +47,6 @@ const CartPage: React.FC = () => {
       calculateTotal(updatedItems);
       return updatedItems;
     });
-  };
-
-  const clearCart = () => {
-    setCartItems([]);
-    localStorage.removeItem('cartItems');
-    setTotalPrice(0);
   };
 
   return (
@@ -118,18 +112,16 @@ const CartPage: React.FC = () => {
                     </div>
                   )}
 
-                  {cartItems.length > 0 && (
-                    <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                      <div className="flex items-center mb-4 md:mb-0">
-                        <i className="fa fa-arrow-left text-sm pr-2"></i>
-                        <span className="text-md font-medium text-blue-500 cursor-pointer" onClick={() => router.push('/')}>Continue Shopping</span>
-                      </div>
-                      <div className="flex justify-center items-end">
-                        <span className="text-sm font-medium text-gray-400 mr-1">Subtotal:</span>
-                        <span className="text-lg font-bold text-white dark:text-black">${totalPrice.toFixed(2)}</span>
-                      </div>
+                  <div className="flex flex-col md:flex-row justify-between items-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-4 md:mb-0">
+                      <i className="fa fa-arrow-left text-sm pr-2"></i>
+                      <span className="text-md font-medium text-blue-500 cursor-pointer" onClick={() => router.push('/')}>Continue Shopping</span>
                     </div>
-                  )}
+                    <div className="flex justify-center items-end">
+                      <span className="text-sm font-medium text-gray-400 mr-1">Subtotal:</span>
+                      <span className="text-lg font-bold text-white dark:text-black">${totalPrice.toFixed(2)}</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Checkout Section */}
@@ -142,14 +134,6 @@ const CartPage: React.FC = () => {
                   >
                     Proceed to Checkout
                   </button>
-                  {cartItems.length > 0 && (
-                    <button 
-                      className="h-12 w-full bg-red-500 rounded focus:outline-none text-white hover:bg-red-600 mt-4"
-                      onClick={clearCart}
-                    >
-                      Clear Cart
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
