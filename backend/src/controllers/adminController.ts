@@ -151,3 +151,14 @@ export const getAllProducts = async (req: Request, res: Response) => {
     res.status(500).send((error as Error).message);
   }
 };
+
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const productsSnapshot = await db.collection('Orders').get();
+    const Orders = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json(Orders);
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
