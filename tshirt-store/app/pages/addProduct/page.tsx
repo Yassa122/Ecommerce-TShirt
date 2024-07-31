@@ -46,7 +46,6 @@ const AddProduct = () => {
     formData.append("Type", type);
     formData.append("image", image);
 
-    // Convert sizes to JSON string
     formData.append("Sizes", JSON.stringify(sizes));
 
     try {
@@ -85,7 +84,7 @@ const AddProduct = () => {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-zinc rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-zinc-700"
               />
             </div>
             <div className="mb-4">
@@ -101,11 +100,11 @@ const AddProduct = () => {
             <div className="mb-4">
               <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2">Sizes and Quantities</label>
               {sizes.map((sizeObj, index) => (
-                <div key={index} className="flex flex-col md:flex-row items-center mb-2 space-y-2 md:space-y-0 md:space-x-2">
+                <div key={index} className="flex flex-row items-center space-x-2 mb-2">
                   <select
                     value={sizeObj.size}
                     onChange={(e) => handleSizeChange(index, "size", e.target.value)}
-                    className="flex-grow p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
+                    className="w-1/2 p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
                   >
                     {basicSizes.map((size) => (
                       <option key={size} value={size}>{size}</option>
@@ -116,7 +115,7 @@ const AddProduct = () => {
                     placeholder="Quantity"
                     value={sizeObj.quantity}
                     onChange={(e) => handleSizeChange(index, "quantity", e.target.value)}
-                    className="md:w-1/4 p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
+                    className="w-1/2 p-2 border text-gray-700 dark:text-gray-300 bg-white dark:bg-zinc-900 border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
                   />
                 </div>
               ))}
