@@ -1,18 +1,20 @@
 // pages/orders.tsx
 "use client";
 import Sidebar from '@/components/sidebar';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 interface OrderItem {
-  name: string;
-  quantity: number;
-  price: number;
-  imageUrl: string;
+  ProductName: string;
+  Quantity: number;
+  TotalPrice: number;
+  Images: string[];
+  selectedSize: string;
 }
 
 interface Order {
   id: string;
-  date: string;
+  orderedAt: Date;
   items: OrderItem[];
   total: number;
   status: string;
@@ -27,28 +29,25 @@ const OrdersPage: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const data: Order[] = [
-          {
-            id: '1',
-            date: '2023-07-27',
-            items: [
-              { name: 'T-Shirt A', quantity: 2, price: 25, imageUrl: '/path/to/image.jpg' },
-              { name: 'T-Shirt B', quantity: 1, price: 20, imageUrl: '/path/to/image.jpg' }
-            ],
-            total: 70,
-            status: 'Shipped',
-          },
-          {
-            id: '2',
-            date: '2023-07-26',
-            items: [
-              { name: 'T-Shirt C', quantity: 1, price: 30, imageUrl: '/path/to/image.jpg' },
-            ],
-            total: 30,
-            status: 'Processing',
-          },
-        ];
-        setOrders(data);
+        const response = await axios.get('http://localhost:3000/api/admin/orders');
+        const fetchedOrders = response.data.map((doc: any) => {
+          const items = [{
+            ProductName: doc.ProductName,
+            Quantity: doc.Quantity,
+            TotalPrice: doc.TotalPrice,
+            Images: doc.Images,
+            selectedSize: doc.selectedSize
+          }];
+
+          return {
+            id: doc.orderId,
+            orderedAt: new Date(doc.orderedAt._seconds * 1000 + doc.orderedAt._nanoseconds / 1000000),
+            items: items,
+            total: items.reduce((sum, item) => sum + item.TotalPrice * item.Quantity, 0),
+            status: doc.status,
+          };
+        });
+        setOrders(fetchedOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
@@ -64,11 +63,11 @@ const OrdersPage: React.FC = () => {
   const downloadCSV = () => {
     const csvContent = orders.map(order => {
       return order.items.map(item => 
-        `${order.id},${new Date(order.date).toLocaleDateString()},${item.name},${item.quantity},${item.price},${order.total},${order.status}`
+        `${order.id},${order.orderedAt.toLocaleString()},${item.ProductName},${item.Quantity},${item.TotalPrice},${order.total},${order.status}`
       ).join('\n');
     }).join('\n');
 
-    const header = 'Order ID,Date,Item Name,Quantity,Price,Total,Status\n';
+    const header = 'Order ID,Date,ProductName,Quantity,Price,Total,Status\n';
     const csv = header + csvContent;
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -84,7 +83,7 @@ const OrdersPage: React.FC = () => {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-0">All Upcoming Orders</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 md:mb-0">All Orders</h1>
           <div className="flex space-x-2">
             <button 
               onClick={toggleViewMode}
@@ -108,15 +107,15 @@ const OrdersPage: React.FC = () => {
             {orders.map((order) => (
               <div key={order.id} className={`p-4 rounded-lg shadow-lg ${darkMode ? 'bg-zinc-900' : 'bg-white'}`}>
                 <h2 className="text-xl font-semibold mb-2">Order #{order.id}</h2>
-                <p className="text-sm mb-4">Date: {new Date(order.date).toLocaleDateString()}</p>
+                <p className="text-sm mb-4">Date: {order.orderedAt.toLocaleString()}</p>
                 <div className="mb-4">
                   {order.items.map((item, index) => (
                     <div key={index} className="flex items-center mb-2">
-                      <img src={item.imageUrl} alt={item.name} className="w-12 h-12 object-cover rounded mr-4" />
+                      <img src={item.Images[0]} alt={item.ProductName} className="w-12 h-12 object-cover rounded mr-4" />
                       <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm">Quantity: {item.quantity}</p>
-                        <p className="text-sm">Price: ${item.price.toFixed(2)}</p>
+                        <p className="font-medium">{item.ProductName}</p>
+                        <p className="text-sm">Quantity: {item.Quantity}</p>
+                        <p className="text-sm">Price: ${item.TotalPrice}</p>
                       </div>
                     </div>
                   ))}
@@ -146,14 +145,14 @@ const OrdersPage: React.FC = () => {
                 {orders.map((order) => (
                   <tr key={order.id} className="border-b dark:border-gray-700">
                     <td className="px-2 md:px-4 py-2">{order.id}</td>
-                    <td className="px-2 md:px-4 py-2">{new Date(order.date).toLocaleDateString()}</td>
+                    <td className="px-2 md:px-4 py-2">{order.orderedAt.toLocaleString()}</td>
                     <td className="px-2 md:px-4 py-2">
                       {order.items.map((item, index) => (
                         <div key={index} className="flex items-center mb-2">
-                          <img src={item.imageUrl} alt={item.name} className="w-8 md:w-12 h-8 md:h-12 object-cover rounded mr-2" />
+                          <img src={item.Images[0]} alt={item.ProductName} className="w-8 md:w-12 h-8 md:h-12 object-cover rounded mr-2" />
                           <div>
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm">Qty: {item.quantity}</p>
+                            <p className="font-medium">{item.ProductName}</p>
+                            <p className="text-sm">Qty: {item.Quantity}</p>
                           </div>
                         </div>
                       ))}
