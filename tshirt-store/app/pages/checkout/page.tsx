@@ -3,7 +3,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "../../../components/navbar"; // Import the Navbar component
+import Navbar from "../../../components/navbar";
 
 // Define the type for cart items
 interface CartItem {
@@ -14,50 +14,68 @@ interface CartItem {
   Images: string[];
 }
 
-const cairoAreas = [
-  "Downtown",
-  "Zamalek",
-  "Maadi",
-  "Nasr City",
-  "Heliopolis",
-  "Garden City",
-  "New Cairo",
-  "Giza",
-  "Mohandessin",
-  "Dokki",
-  // Add more areas as needed
+interface Area {
+  name: string;
+  fee: number;
+}
+
+const cairoAreas: Area[] = [
+  { name: "Downtown", fee: 60 },
+  { name: "Zamalek", fee: 60 },
+  { name: "Maadi", fee: 60 },
+  { name: "Nasr City", fee: 60 },
+  { name: "Heliopolis", fee: 60 },
+  { name: "Garden City", fee: 60 },
+  { name: "New Cairo", fee: 60 },
+  { name: "Giza", fee: 60 },
+  { name: "Mohandessin", fee: 60 },
+  { name: "Dokki", fee: 60 },
+  { name: "October - El Shorouk - Badr City", fee: 60 },
+  { name: "Alexandria - Suez - Ismailia - Port Said", fee: 75 },
+  { name: "Qalyubia - Kafr El Sheikh - Beheira - Dakahlia - Menoufia - Mansoura - Damietta - Beni Suef - Sharqia", fee: 85 },
+  { name: "Faiyum - Assiut - Sohag - Qena", fee: 105 },
+  { name: "Hurghada - Sharm El Sheikh - Ain Sokhna - South Sinai - Luxor - Aswan", fee: 115 },
+  { name: "Bahariya Oasis - Marsa Alam - North Coast", fee: 150 }
 ];
 
 const CheckoutPage: React.FC = () => {
-  const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", postalCode: "" });
-  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Set the correct type
+  const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", email: "" });
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     // Fetch cart items from local storage
     const items: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCartItems(items);
-    calculateTotal(items);
+    calculateTotal(items, 0); // Initial calculation without delivery fee
   }, []);
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setShippingInfo({ ...shippingInfo, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setShippingInfo({ ...shippingInfo, [name]: value });
+    if (name === "area") {
+      const selectedArea = cairoAreas.find(area => area.name === value);
+      const fee = selectedArea ? selectedArea.fee : 0;
+      setDeliveryFee(fee);
+      calculateTotal(cartItems, fee);
+    }
   };
 
-  const calculateTotal = (items: CartItem[]) => {
-    const total = items.reduce((sum, item) => sum + item.Quantity * item.TotalPrice, 0);
-    setTotalPrice(total);
+  const calculateTotal = (items: CartItem[], fee: number) => {
+    const itemsTotal = items.reduce((sum, item) => sum + item.Quantity * item.TotalPrice, 0);
+    setTotalPrice(itemsTotal + fee);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("amaria-backend.vercel.app/api/users/checkout", { shippingInfo, cartItems })
+    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems })
       .then(response => {
         alert("Order placed successfully!");
         localStorage.removeItem('cartItems'); // Clear the cart
-        router.push("/order-confirmation");
+        router.push("/pages/orderConfirmed");
       })
       .catch(error => console.error("Error processing checkout:", error));
   };
@@ -111,16 +129,16 @@ const CheckoutPage: React.FC = () => {
               >
                 <option value="" disabled>Select your area</option>
                 {cairoAreas.map((area, index) => (
-                  <option key={index} value={area}>{area}</option>
+                  <option key={index} value={area.name}>{area.name}</option>
                 ))}
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-300 dark:text-gray-700">Postal Code</label>
+              <label className="block text-gray-300 dark:text-gray-700">Email Address</label>
               <input
-                type="text"
-                name="postalCode"
-                value={shippingInfo.postalCode}
+                type="email"
+                name="email"
+                value={shippingInfo.email}
                 onChange={handleShippingChange}
                 className="w-full p-2 border border-gray-600 dark:border-gray-300 rounded-lg bg-neutral-700 dark:bg-gray-200"
                 required
@@ -164,6 +182,10 @@ const CheckoutPage: React.FC = () => {
               ))}
               <div className="border-t border-gray-600 dark:border-gray-300 mt-4 pt-4">
                 <div className="flex justify-between">
+                  <span className="text-lg font-semibold">Delivery Fee:</span>
+                  <span className="text-lg font-bold">${deliveryFee.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between mt-2">
                   <span className="text-lg font-semibold">Total:</span>
                   <span className="text-lg font-bold">${totalPrice.toFixed(2)}</span>
                 </div>
