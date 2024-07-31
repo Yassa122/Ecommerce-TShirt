@@ -2,6 +2,7 @@
 import Sidebar from "@/components/sidebar";
 import axios from "axios";
 import {
+  ArcElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
@@ -14,7 +15,7 @@ import {
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
 import AddProduct from "../addProduct/page";
@@ -26,7 +27,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
 interface Product {
@@ -41,6 +43,8 @@ interface Product {
 interface Order {
   date: string;
   total: number;
+  deliveryFee: number;
+  netWorth: number;
 }
 
 const AdminHome = () => {
@@ -57,13 +61,19 @@ const AdminHome = () => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
 
-    axios.get("https://amaria-backend.vercel.app/api/admin/getAllProducts").then((response) => {
+    axios.get("http://localhost:3000/api/admin/getAllProducts").then((response) => {
       setProducts(response.data);
       setFilteredProducts(response.data);
     });
 
-    axios.get("/api/admin/orders").then((response) => {
-      setOrders(response.data);
+    axios.get("http://localhost:3000/api/admin/orders").then((response) => {
+      const transformedOrders = response.data.map((order: any) => ({
+        date: new Date(order.orderedAt._seconds * 1000).toLocaleDateString(),
+        total: order.TotalPrice,
+        deliveryFee: order.deliveryFee || 0,  // Assuming deliveryFee is part of the order data
+        netWorth: order.TotalPrice - (order.deliveryFee || 0)
+      }));
+      setOrders(transformedOrders);
     });
   }, []);
 
@@ -80,6 +90,10 @@ const AdminHome = () => {
     localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode]);
 
+  // Calculate total net worth and delivery fees
+  const totalNetWorth = orders.reduce((sum, order) => sum + order.netWorth, 0);
+  const totalDeliveryFees = orders.reduce((sum, order) => sum + order.deliveryFee, 0);
+
   const orderData = {
     labels: orders.map((order) => order.date),
     datasets: [
@@ -90,13 +104,40 @@ const AdminHome = () => {
         borderColor: "rgba(75, 192, 192, 1)",
         tension: 0.1,
       },
+      {
+        label: "Delivery Fees",
+        data: orders.map((order) => order.deliveryFee),
+        fill: false,
+        borderColor: "rgba(255, 159, 64, 1)",
+        tension: 0.1,
+      },
+      {
+        label: "Net Worth",
+        data: orders.map((order) => order.netWorth),
+        fill: false,
+        borderColor: "rgba(153, 102, 255, 1)",
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const donutData = {
+    labels: ['Net Worth', 'Delivery Fees'],
+    datasets: [
+      {
+        label: 'Financial Overview',
+        data: [totalNetWorth, totalDeliveryFees],
+        backgroundColor: ['rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)'],
+        borderColor: ['rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'],
+        borderWidth: 1,
+      },
     ],
   };
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
+        await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");
@@ -246,6 +287,16 @@ const AdminHome = () => {
           >
             <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Order Summary</h2>
             <Line data={orderData} />
+          </motion.section>
+
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
+          >
+            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Financial Overview</h2>
+            <Doughnut data={donutData} />
           </motion.section>
         </div>
       </main>
