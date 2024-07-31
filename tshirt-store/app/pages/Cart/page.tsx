@@ -49,6 +49,12 @@ const CartPage: React.FC = () => {
     });
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem('cartItems');
+    setTotalPrice(0);
+  };
+
   return (
     <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
       <Navbar />
@@ -122,6 +128,18 @@ const CartPage: React.FC = () => {
                       <span className="text-lg font-bold text-white dark:text-black">${totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
+
+                  {/* Clear Cart Button */}
+                  {cartItems.length > 0 && (
+                    <div className="mt-6 flex justify-center">
+                      <button 
+                        className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                        onClick={clearCart}
+                      >
+                        Clear Cart
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Checkout Section */}
