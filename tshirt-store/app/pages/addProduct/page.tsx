@@ -50,7 +50,7 @@ const AddProduct = () => {
     formData.append("Sizes", JSON.stringify(sizes));
 
     try {
-      await axios.post("https://amaria-backend.vercel.app/api/admin/products", formData, {
+      await axios.post("http://localhost:3000/api/admin/products", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
