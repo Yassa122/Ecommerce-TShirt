@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import admin from 'firebase-admin';
+import { sendOrderConfirmationEmail } from '../config/mailer';
 
 const db = admin.firestore();
 const storage = admin.storage().bucket();
@@ -68,6 +69,51 @@ export const getCartItems = async (req: Request, res: Response) => {
     const snapshot = await cartRef.get();
     const cartItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     res.status(200).json(cartItems);
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
+export const checkout = async (req: Request, res: Response) => {
+  const { cartItems, shippingInfo } = req.body;
+
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    return res.status(400).send('Cart items are required.');
+  }
+
+  try {
+    // Create a batch to perform all the operations atomically
+    const batch = db.batch();
+
+    // Process each cart item
+    const orderDetails = cartItems.map(item => {
+      const orderRef = db.collection('Orders').doc();
+      batch.set(orderRef, {
+        ProductName: item.ProductName,
+        ProductId: item.id,
+        Quantity: item.Quantity,
+        TotalPrice: item.TotalPrice,
+        Images: item.Images,
+        selectedSize: item.selectedSize,
+        orderId: orderRef.id,
+        status: 'Pending',
+        orderedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+      return {
+        ProductName: item.ProductName,
+        ProductId: item.id,
+        Quantity: item.Quantity,
+        TotalPrice: item.TotalPrice,
+        selectedSize: item.selectedSize,
+      };
+    });
+
+    // Commit the batch
+    await batch.commit();
+
+    // Send confirmation email
+    sendOrderConfirmationEmail(shippingInfo.email, orderDetails);
+
+    res.status(201).send('Checkout successful, orders placed.');
   } catch (error) {
     res.status(500).send((error as Error).message);
   }
