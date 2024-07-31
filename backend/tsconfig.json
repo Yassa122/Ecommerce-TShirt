@@ -9,6 +9,6 @@
     "resolveJsonModule": true,
     "moduleResolution": "node"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/config/mailer.ts"],
   "exclude": ["node_modules"]
 }
