@@ -26,7 +26,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Fetch actual products from your API
-    axios.get("https://amaria-backend.vercel.app/api/users/products")
+    axios.get("http://localhost:3000/api/users/products")
       .then((response) => {
         setProducts(response.data);
       })
