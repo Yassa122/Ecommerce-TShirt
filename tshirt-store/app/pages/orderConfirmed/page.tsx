@@ -1,35 +1,9 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import { FaCheckCircle } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
 
 const OrderConfirmed = () => {
   const router = useRouter();
-  const [orderDetails, setOrderDetails] = useState(null);
-
-  useEffect(() => {
-    // Attempt to parse order details from router state or localStorage
-    let details = null;
-    try {
-      // Check if orderDetails exists in the query or localStorage
-      details = router.query.orderDetails ? JSON.parse(router.query.orderDetails) : null;
-    } catch (error) {
-      console.error("Failed to parse order details:", error);
-    }
-
-    if (details) {
-      setOrderDetails(details);
-    } else {
-      // If order details are not found, redirect to homepage or show an error message
-      router.push('/');
-    }
-  }, [router]);
-
-  if (!orderDetails) {
-    return null; // Optionally show a loading indicator or a message
-  }
-
-  const { orderNumber, orderDate, totalAmount } = orderDetails;
 
   const handleContinueShopping = () => {
     router.push('/'); // Redirect to home or shopping page
@@ -44,9 +18,9 @@ const OrderConfirmed = () => {
 
         <div className="bg-gray-50 p-4 rounded-lg shadow-inner mb-6">
           <h2 className="text-xl font-semibold mb-2">Order Details</h2>
-          <p className="mb-1"><strong>Order Number:</strong> {orderNumber}</p>
-          <p className="mb-1"><strong>Order Date:</strong> {orderDate}</p>
-          <p className="mb-1"><strong>Total Amount:</strong> ${totalAmount.toFixed(2)}</p>
+          <p className="mb-1"><strong>Order Number:</strong> #123456</p>
+          <p className="mb-1"><strong>Order Date:</strong> July 30, 2024</p>
+          <p className="mb-1"><strong>Total Amount:</strong> $123.45</p>
         </div>
 
         <button
