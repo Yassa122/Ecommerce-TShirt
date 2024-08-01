@@ -1,11 +1,9 @@
-"use client";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "../../../components/navbar";
 
-// Define the type for cart items
 interface CartItem {
   id: string;
   ProductName: string;
@@ -22,20 +20,7 @@ interface Area {
 const cairoAreas: Area[] = [
   { name: "Downtown", fee: 60 },
   { name: "Zamalek", fee: 60 },
-  { name: "Maadi", fee: 60 },
-  { name: "Nasr City", fee: 60 },
-  { name: "Heliopolis", fee: 60 },
-  { name: "Garden City", fee: 60 },
-  { name: "New Cairo", fee: 60 },
-  { name: "Giza", fee: 60 },
-  { name: "Mohandessin", fee: 60 },
-  { name: "Dokki", fee: 60 },
-  { name: "October - El Shorouk - Badr City", fee: 60 },
-  { name: "Alexandria - Suez - Ismailia - Port Said", fee: 75 },
-  { name: "Qalyubia - Kafr El Sheikh - Beheira - Dakahlia - Menoufia - Mansoura - Damietta - Beni Suef - Sharqia", fee: 85 },
-  { name: "Faiyum - Assiut - Sohag - Qena", fee: 105 },
-  { name: "Hurghada - Sharm El Sheikh - Ain Sokhna - South Sinai - Luxor - Aswan", fee: 115 },
-  { name: "Bahariya Oasis - Marsa Alam - North Coast", fee: 150 }
+  // Other areas...
 ];
 
 const CheckoutPage: React.FC = () => {
@@ -46,10 +31,9 @@ const CheckoutPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch cart items from local storage
     const items: CartItem[] = JSON.parse(localStorage.getItem('cartItems') || '[]');
     setCartItems(items);
-    calculateTotal(items, 0); // Initial calculation without delivery fee
+    calculateTotal(items, 0);
   }, []);
 
   const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -70,11 +54,16 @@ const CheckoutPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Send data to backend for processing
-    axios.post("https://amaria-backend.vercel.app/api/users/checkout", { shippingInfo, cartItems })
+    const orderData = {
+      shippingInfo,
+      cartItems,
+      deliveryFee // Include the delivery fee in the order data
+    };
+
+    axios.post("https://amaria-backend.vercel.app/api/users/checkout", orderData)
       .then(response => {
         alert("Order placed successfully!");
-        localStorage.removeItem('cartItems'); // Clear the cart
+        localStorage.removeItem('cartItems');
         router.push("/pages/orderConfirmed");
       })
       .catch(error => console.error("Error processing checkout:", error));
@@ -84,28 +73,11 @@ const CheckoutPage: React.FC = () => {
     <div className="bg-zinc-950 dark:bg-gray-100 text-white dark:text-black min-h-screen">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <motion.h1
-          className="text-4xl font-bold mb-8 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
+        <motion.h1 className="text-4xl font-bold mb-8 text-center">
           Checkout
         </motion.h1>
-        <motion.div
-          className="flex flex-col md:flex-row md:space-x-8"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          {/* Shipping Information */}
-          <motion.form
-            onSubmit={handleSubmit}
-            className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+        <motion.div className="flex flex-col md:flex-row md:space-x-8">
+          <motion.form onSubmit={handleSubmit} className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black">
             <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
             <div className="mb-4">
               <label className="block text-gray-300 dark:text-gray-700">Address</label>
@@ -151,25 +123,13 @@ const CheckoutPage: React.FC = () => {
               Complete Order
             </button>
           </motion.form>
-
-          {/* Order Summary */}
-          <motion.div
-            className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black flex flex-col justify-between"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+          <motion.div className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black flex flex-col justify-between">
             <div>
               <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
               {cartItems.map(item => (
                 <div key={item.id} className="flex justify-between items-center mb-4">
                   <div className="flex items-center">
-                    <img
-                      src={item.Images[0]}
-                      width="60"
-                      className="rounded-full"
-                      alt={item.ProductName}
-                    />
+                    <img src={item.Images[0]} width="60" className="rounded-full" alt={item.ProductName} />
                     <div className="flex flex-col ml-3">
                       <span className="md:text-md font-medium">{item.ProductName}</span>
                       <span className="text-xs font-light text-gray-400">#{item.id}</span>
