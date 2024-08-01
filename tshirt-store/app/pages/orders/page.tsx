@@ -25,6 +25,7 @@ const OrdersPage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'card'>('card');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -55,6 +56,15 @@ const OrdersPage: React.FC = () => {
 
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    const sortedOrders = [...orders].sort((a, b) => {
+      return sortOrder === 'newest'
+        ? b.orderedAt.getTime() - a.orderedAt.getTime()
+        : a.orderedAt.getTime() - b.orderedAt.getTime();
+    });
+    setOrders(sortedOrders);
+  }, [sortOrder, orders]);
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'card' ? 'table' : 'card');
@@ -99,6 +109,14 @@ const OrdersPage: React.FC = () => {
             >
               Download CSV
             </button>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
+              className="py-2 px-4 rounded-lg bg-gray-200 text-gray-800 border border-gray-300"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
           </div>
         </div>
 
