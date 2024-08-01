@@ -73,8 +73,6 @@ export const getCartItems = async (req: Request, res: Response) => {
     res.status(500).send((error as Error).message);
   }
 };
-
-// Function to handle checkout and order creation
 export const checkout = async (req: Request, res: Response) => {
   const { cartItems, shippingInfo, deliveryFee } = req.body;
 
@@ -96,7 +94,8 @@ export const checkout = async (req: Request, res: Response) => {
         TotalPrice: item.TotalPrice,
         Images: item.Images,
         selectedSize: item.selectedSize,
-        orderId: orderRef.id,
+        deliveryFee, 
+        orderId: orderRef.id,// Include delivery fee in each order document
         status: 'Pending',
         orderedAt: admin.firestore.FieldValue.serverTimestamp()
       });
@@ -106,6 +105,7 @@ export const checkout = async (req: Request, res: Response) => {
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         selectedSize: item.selectedSize,
+        deliveryFee,
       };
     });
 
