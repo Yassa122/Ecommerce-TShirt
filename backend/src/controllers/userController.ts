@@ -81,6 +81,9 @@ export const checkout = async (req: Request, res: Response) => {
   }
 
   try {
+    // Set a default value for deliveryFee if it is undefined
+    const fee = deliveryFee !== undefined ? deliveryFee : 0;
+
     // Create a batch to perform all the operations atomically
     const batch = db.batch();
 
@@ -94,7 +97,7 @@ export const checkout = async (req: Request, res: Response) => {
         TotalPrice: item.TotalPrice,
         Images: item.Images,
         selectedSize: item.selectedSize,
-        deliveryFee, // Include delivery fee in each order document
+        deliveryFee: fee, // Ensure deliveryFee is defined
         status: 'Pending',
         orderedAt: admin.firestore.FieldValue.serverTimestamp()
       });
@@ -104,7 +107,7 @@ export const checkout = async (req: Request, res: Response) => {
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         selectedSize: item.selectedSize,
-        deliveryFee,
+        deliveryFee: fee,
       };
     });
 
