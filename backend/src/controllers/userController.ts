@@ -98,8 +98,7 @@ export const checkout = async (req: Request, res: Response) => {
         selectedSize: item.selectedSize,
         orderId: orderRef.id,
         status: 'Pending',
-        orderedAt: admin.firestore.FieldValue.serverTimestamp(),
-        deliveryFee // Include delivery fee
+        orderedAt: admin.firestore.FieldValue.serverTimestamp()
       });
       return {
         ProductName: item.ProductName,
