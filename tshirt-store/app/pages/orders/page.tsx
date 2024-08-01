@@ -3,6 +3,7 @@
 import Sidebar from '@/components/sidebar';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { FaSort } from 'react-icons/fa'; // Import the sort icon from react-icons
 
 interface OrderItem {
   ProductName: string;
@@ -109,14 +110,13 @@ const OrdersPage: React.FC = () => {
             >
               Download CSV
             </button>
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value as 'newest' | 'oldest')}
-              className="py-2 px-4 rounded-lg bg-gray-200 text-gray-800 border border-gray-300"
+            <button 
+              onClick={() => setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest')}
+              className="py-2 px-4 rounded-lg bg-gray-200 text-gray-800 border border-gray-300 shadow-lg flex items-center justify-center"
             >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
+              <FaSort className="mr-2" />
+              {sortOrder === 'newest' ? 'Sort by Oldest' : 'Sort by Newest'}
+            </button>
           </div>
         </div>
 
