@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
-import { getToken, messaging, onMessage } from "../../config/firebaseConfig"; // Import messaging
+import { messaging, getToken, onMessage } from "../../config/firebaseConfig"; // Import messaging
 import AddProduct from "../addProduct/page";
 
 ChartJS.register(
@@ -93,23 +93,26 @@ const AdminHome: React.FC = () => {
   }, [darkMode]);
 
   useEffect(() => {
-    // Request permission for notifications
-    getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' }).then((currentToken) => {
-      if (currentToken) {
-        console.log('FCM Token:', currentToken);
-        // Send the token to your server and save it for later use
-      } else {
-        console.log('No registration token available. Request permission to generate one.');
-      }
-    }).catch((err) => {
-      console.error('An error occurred while retrieving token. ', err);
-    });
+    // Ensure this code runs only on the client side
+    if (typeof window !== "undefined" && messaging) {
+      // Request permission for notifications
+      getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' }).then((currentToken) => {
+        if (currentToken) {
+          console.log('FCM Token:', currentToken);
+          // Send the token to your server and save it for later use
+        } else {
+          console.log('No registration token available. Request permission to generate one.');
+        }
+      }).catch((err) => {
+        console.error('An error occurred while retrieving token. ', err);
+      });
 
-    onMessage(messaging, (payload) => {
-      console.log('Message received. ', payload);
-      // Customize your notification here
-      alert(payload.notification?.title);
-    });
+      onMessage(messaging, (payload) => {
+        console.log('Message received. ', payload);
+        // Customize your notification here
+        alert(payload.notification?.title);
+      });
+    }
   }, []);
 
   // Calculate total net worth and delivery fees
