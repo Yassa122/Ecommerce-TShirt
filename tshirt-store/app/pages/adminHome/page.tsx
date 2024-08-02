@@ -21,6 +21,7 @@ import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sideb
 import AddProduct from "../addProduct/page";
 import { requestNotificationPermission, messaging } from "../../config/firebaseConfig";
 import { onMessage } from "firebase/messaging";
+import SubscribeToNotifications from "./SubscribeToNotifications";
 
 ChartJS.register(
   CategoryScale,
@@ -199,6 +200,10 @@ const AdminHome: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  function toggleEditing() {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
       <Sidebar
@@ -215,6 +220,7 @@ const AdminHome: React.FC = () => {
           <HiMenuAlt1 size={24} />
         </button>
       </div>
+      <SubscribeToNotifications /> {/* Add this line */}
 
       <main className="flex-1 p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-8">
