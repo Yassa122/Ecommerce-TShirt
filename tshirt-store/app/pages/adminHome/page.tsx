@@ -1,4 +1,5 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar";
 import axios from "axios";
 import {
@@ -14,12 +15,12 @@ import {
 } from "chart.js";
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
-import { getToken, messaging, onMessage } from "../../config/firebaseConfig"; // Import messaging
 import AddProduct from "../addProduct/page";
+import { requestNotificationPermission, messaging } from "../../config/firebaseConfig";
+import { onMessage } from "firebase/messaging";
 
 ChartJS.register(
   CategoryScale,
@@ -77,6 +78,16 @@ const AdminHome: React.FC = () => {
       }));
       setOrders(transformedOrders);
     });
+
+    // Request permission for notifications
+    requestNotificationPermission();
+
+    // Handle incoming messages
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      // Customize your notification here
+      alert(payload.notification?.title);
+    });
   }, []);
 
   useEffect(() => {
@@ -91,41 +102,6 @@ const AdminHome: React.FC = () => {
     document.body.className = darkMode ? "dark" : "";
     localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode]);
-
-  useEffect(() => {
-    // Ensure this code runs only on the client side
-    if (typeof window !== "undefined" && messaging) {
-      // Request permission for notifications
-      getToken(messaging, { vapidKey: 'BDtfJ91uRhKdrKuHd4bt_KhhNPRtxpEvBfPV1mWDDea6Fprogv9BX02o_s717uRrMf64a_4uiy6eTawyblqWC0U' }).then((currentToken) => {
-        if (currentToken) {
-          console.log('FCM Token:', currentToken);
-          // Send the token to your server and save it for later use
-        } else {
-          console.log('No registration token available. Request permission to generate one.');
-        }
-      }).catch((err) => {
-        console.error('An error occurred while retrieving token. ', err);
-      });
-
-      onMessage(messaging, (payload) => {
-        console.log('Message received. ', payload);
-        // Customize your notification here
-        alert(payload.notification?.title);
-      });
-
-      // Register service worker
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-          .register('/firebase-messaging-sw.js')
-          .then((registration) => {
-            console.log('Service Worker registration successful with scope: ', registration.scope);
-          })
-          .catch((err) => {
-            console.error('Service Worker registration failed: ', err);
-          });
-      }
-    }
-  }, []);
 
   // Calculate total net worth and delivery fees
   const totalNetWorth = orders.reduce((sum, order) => sum + order.netWorth, 0);
@@ -222,10 +198,6 @@ const AdminHome: React.FC = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
-  function toggleEditing() {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
