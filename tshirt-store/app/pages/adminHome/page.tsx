@@ -208,6 +208,10 @@ const AdminHome: React.FC = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  function toggleEditing() {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
       <Sidebar
