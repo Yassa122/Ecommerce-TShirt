@@ -74,15 +74,18 @@ export const getCartItems = async (req: Request, res: Response) => {
   }
 };
 
-// Function to send FCM notification
-const sendNotification = async (token: string, message: admin.messaging.MessagingPayload) => {
+// Enable ignoreUndefinedProperties
+admin.firestore().settings({ ignoreUndefinedProperties: true });
+
+const sendNotification = async (message: admin.messaging.Message) => {
   try {
-    await admin.messaging().sendToDevice(token, message);
-    console.log("Notification sent successfully");
+    await admin.messaging().send(message);
+    console.log('Notification sent successfully');
   } catch (error) {
-    console.error("Error sending notification:", error);
+    console.error('Error sending notification:', error);
   }
 };
+
 export const checkout = async (req: Request, res: Response) => {
   const { cartItems, shippingInfo, deliveryFee } = req.body;
 
@@ -96,26 +99,31 @@ export const checkout = async (req: Request, res: Response) => {
 
     // Process each cart item
     const orderDetails = cartItems.map(item => {
+      if (!item.ProductId || !item.ProductName || !item.Quantity || !item.TotalPrice || !item.Images || !item.selectedSize) {
+        throw new Error('All product fields are required');
+      }
+
       const orderRef = db.collection('Orders').doc();
       batch.set(orderRef, {
         ProductName: item.ProductName,
-        ProductId: item.id,
+        ProductId: item.ProductId,
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         Images: item.Images,
         selectedSize: item.selectedSize,
-        deliveryFee, 
-        orderId: orderRef.id,// Include delivery fee in each order document
+        deliveryFee: item.deliveryFee,
+        orderId: orderRef.id,
         status: 'Pending',
         orderedAt: admin.firestore.FieldValue.serverTimestamp()
       });
+
       return {
         ProductName: item.ProductName,
-        ProductId: item.id,
+        ProductId: item.ProductId,
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         selectedSize: item.selectedSize,
-        deliveryFee,
+        deliveryFee: item.deliveryFee,
       };
     });
 
@@ -125,18 +133,19 @@ export const checkout = async (req: Request, res: Response) => {
     // Send confirmation email
     sendOrderConfirmationEmail(shippingInfo.email, orderDetails);
 
-   // Send notification to the admin
-   const adminToken = 'ADMIN_FCM_TOKEN'; // Replace with the admin's FCM token
-   const message = {
-     notification: {
-       title: 'New Order Received',
-       body: 'A new order has been placed. Check the admin panel for details.',
-     },
-   };
-   await sendNotification(adminToken, message);
+    // Send notification to admin
+    const message: admin.messaging.Message = {
+      notification: {
+        title: 'New Order Received',
+        body: `Order from ${shippingInfo.email} has been placed.`,
+      },
+      topic: 'admin-notifications', // Ensure the admin is subscribed to this topic
+    };
 
-   res.status(201).send('Checkout successful, orders placed.');
- } catch (error) {
-   res.status(500).send((error as Error).message);
- }
+    await sendNotification(message);
+
+    res.status(201).send('Checkout successful, orders placed.');
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
 };
