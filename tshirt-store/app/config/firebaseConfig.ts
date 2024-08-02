@@ -1,5 +1,6 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+// firebaseConfig.ts
+import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
+import { getMessaging, getToken, Messaging, onMessage } from 'firebase/messaging';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB7fjT3BJOxTA6dHSFH4PyrCtaMpK5OAWs",
@@ -10,8 +11,11 @@ const firebaseConfig = {
   appId: "1:580207836879:web:d52d32c83768a9b67741ba",
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+let messaging: Messaging | undefined;
+if (typeof window !== "undefined" && !getApps().length) {
+  const app: FirebaseApp = initializeApp(firebaseConfig);
+  messaging = getMessaging(app);
+}
 
 export { getToken, messaging, onMessage };
 
