@@ -73,6 +73,16 @@ export const getCartItems = async (req: Request, res: Response) => {
     res.status(500).send((error as Error).message);
   }
 };
+
+// Function to send FCM notification
+const sendNotification = async (token: string, message: admin.messaging.MessagingPayload) => {
+  try {
+    await admin.messaging().sendToDevice(token, message);
+    console.log("Notification sent successfully");
+  } catch (error) {
+    console.error("Error sending notification:", error);
+  }
+};
 export const checkout = async (req: Request, res: Response) => {
   const { cartItems, shippingInfo, deliveryFee } = req.body;
 
@@ -115,8 +125,18 @@ export const checkout = async (req: Request, res: Response) => {
     // Send confirmation email
     sendOrderConfirmationEmail(shippingInfo.email, orderDetails);
 
-    res.status(201).send('Checkout successful, orders placed.');
-  } catch (error) {
-    res.status(500).send((error as Error).message);
-  }
+   // Send notification to the admin
+   const adminToken = 'ADMIN_FCM_TOKEN'; // Replace with the admin's FCM token
+   const message = {
+     notification: {
+       title: 'New Order Received',
+       body: 'A new order has been placed. Check the admin panel for details.',
+     },
+   };
+   await sendNotification(adminToken, message);
+
+   res.status(201).send('Checkout successful, orders placed.');
+ } catch (error) {
+   res.status(500).send((error as Error).message);
+ }
 };
