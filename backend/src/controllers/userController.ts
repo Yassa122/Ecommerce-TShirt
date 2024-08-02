@@ -99,14 +99,10 @@ export const checkout = async (req: Request, res: Response) => {
 
     // Process each cart item
     const orderDetails = cartItems.map(item => {
-      if (!item.ProductId || !item.ProductName || !item.Quantity || !item.TotalPrice || !item.Images || !item.selectedSize) {
-        throw new Error('All product fields are required');
-      }
-
       const orderRef = db.collection('Orders').doc();
       batch.set(orderRef, {
         ProductName: item.ProductName,
-        ProductId: item.ProductId,
+        ProductId: item.id,
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         Images: item.Images,
@@ -116,10 +112,9 @@ export const checkout = async (req: Request, res: Response) => {
         status: 'Pending',
         orderedAt: admin.firestore.FieldValue.serverTimestamp()
       });
-
       return {
         ProductName: item.ProductName,
-        ProductId: item.ProductId,
+        ProductId: item.id,
         Quantity: item.Quantity,
         TotalPrice: item.TotalPrice,
         selectedSize: item.selectedSize,
