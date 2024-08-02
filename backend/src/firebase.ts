@@ -8,8 +8,9 @@ const serviceAccount = require('./service-account-file.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
-  storageBucket: "gs://e-commerce-t-shirt.appspot.com" // Add your bucket name here
+  storageBucket: "e-commerce-t-shirt.appspot.com"
 });
 
 export const db = admin.firestore();
-export const storage = admin.storage().bucket(); // Access the storage bucket
+export const storage = admin.storage().bucket();
+export const messaging = admin.messaging(); // Export messaging service
