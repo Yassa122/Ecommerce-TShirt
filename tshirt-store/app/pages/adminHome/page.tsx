@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
-import { messaging, getToken, onMessage } from "../../config/firebaseConfig"; // Import messaging
+import { getToken, messaging, onMessage } from "../../config/firebaseConfig"; // Import messaging
 import AddProduct from "../addProduct/page";
 
 ChartJS.register(
@@ -96,7 +96,7 @@ const AdminHome: React.FC = () => {
     // Ensure this code runs only on the client side
     if (typeof window !== "undefined" && messaging) {
       // Request permission for notifications
-      getToken(messaging, { vapidKey: 'YOUR_VAPID_KEY' }).then((currentToken) => {
+      getToken(messaging, { vapidKey: 'BDtfJ91uRhKdrKuHd4bt_KhhNPRtxpEvBfPV1mWDDea6Fprogv9BX02o_s717uRrMf64a_4uiy6eTawyblqWC0U' }).then((currentToken) => {
         if (currentToken) {
           console.log('FCM Token:', currentToken);
           // Send the token to your server and save it for later use
