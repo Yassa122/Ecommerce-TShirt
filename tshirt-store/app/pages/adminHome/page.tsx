@@ -1,5 +1,4 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import Sidebar from "@/components/sidebar";
 import axios from "axios";
 import {
@@ -13,14 +12,15 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+import { onMessage } from "firebase/messaging";
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
+import { messaging, requestNotificationPermission } from "../../config/firebaseConfig";
 import AddProduct from "../addProduct/page";
-import { requestNotificationPermission, messaging } from "../../config/firebaseConfig";
-import { onMessage } from "firebase/messaging";
 import SubscribeToNotifications from "./SubscribeToNotifications";
 
 ChartJS.register(
@@ -222,22 +222,22 @@ const AdminHome: React.FC = () => {
       </div>
       <SubscribeToNotifications /> {/* Add this line */}
 
-      <main className="flex-1 p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
+      <main className="flex-1 p-4 md:p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-semibold text-gray-700 dark:text-gray-300">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-700 dark:text-gray-300">Dashboard</h1>
           <div className="w-full md:w-1/3">
             <input
               type="text"
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-800 text-sm md:text-base"
             />
           </div>
         </div>
         {editing && editedProduct ? (
-          <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Edit Product</h2>
+          <div className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Edit Product</h2>
             <div className="mb-4">
               <label className="block text-gray-700 dark:text-gray-300 mb-2">Product Name</label>
               <input
@@ -304,11 +304,11 @@ const AdminHome: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {filteredProducts.map((product) => (
               <motion.div
                 key={product.id}
-                className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg cursor-pointer"
+                className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-lg shadow-lg cursor-pointer"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -321,7 +321,7 @@ const AdminHome: React.FC = () => {
                     type="text"
                     value={product.ProductName}
                     onChange={(e) => handleTextChange('ProductName', e.target.value)}
-                    className="bg-transparent w-full text-lg font-semibold text-gray-700 dark:text-gray-300 border-b border-transparent focus:outline-none focus:border-blue-500"
+                    className="bg-transparent w-full text-lg md:text-xl font-semibold text-gray-700 dark:text-gray-300 border-b border-transparent focus:outline-none focus:border-blue-500"
                     disabled={!editing}
                   />
                 </div>
@@ -375,14 +375,14 @@ const AdminHome: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-8">
           <motion.section
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
+            className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-lg shadow-lg"
           >
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Add New Product</h2>
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Add New Product</h2>
             <AddProduct />
           </motion.section>
 
@@ -390,9 +390,9 @@ const AdminHome: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
+            className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-lg shadow-lg"
           >
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Order Summary</h2>
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Order Summary</h2>
             <Line data={orderData} />
           </motion.section>
 
@@ -400,9 +400,9 @@ const AdminHome: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg"
+            className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-lg shadow-lg"
           >
-            <h2 className="text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Financial Overview</h2>
+            <h2 className="text-xl md:text-2xl font-semibold mb-4 text-gray-700 dark:text-gray-300">Financial Overview</h2>
             <Doughnut data={donutData} />
           </motion.section>
         </div>
