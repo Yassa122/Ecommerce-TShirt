@@ -183,3 +183,73 @@ export const getAllOrders = async (req: Request, res: Response) => {
     res.status(500).send((error as Error).message);
   }
 };
+export const addPhoto = async (req: Request, res: Response) => {
+  upload.array('image')(req, res, async (err) => {
+    if (err) {
+      return res.status(500).send(err.message);
+    }
+
+    if (!req.files || !Array.isArray(req.files)) {
+      return res.status(400).send('No files uploaded.');
+    }
+
+    try {
+      const fileUrls = await Promise.all(
+        req.files.map(async (file: any) => {
+          const imageName = `${Date.now()}-${file.originalname}`;
+          const fileUpload = storage.file(imageName);
+          await fileUpload.save(file.buffer, {
+            metadata: {
+              contentType: file.mimetype,
+            },
+          });
+          return `https://storage.googleapis.com/${storage.name}/${fileUpload.name}`;
+        })
+      );
+
+      const photoRefs = await Promise.all(
+        fileUrls.map(async (url) => {
+          const photoRef = await db.collection('gallery').add({
+            url,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          return { id: photoRef.id, url };
+        })
+      );
+
+      res.status(201).send(photoRefs);
+    } catch (error) {
+      res.status(500).send((error as Error).message);
+    }
+  });
+};
+// Get All Photos
+export const getAllPhotos = async (req: Request, res: Response) => {
+  try {
+    const photosSnapshot = await db.collection('gallery').get();
+    const photos = photosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    res.status(200).json(photos);
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
+
+// Delete Photo
+export const deletePhoto = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const photoRef = db.collection('gallery').doc(id);
+    const photoDoc = await photoRef.get();
+
+    if (!photoDoc.exists) {
+      return res.status(404).send('Photo not found.');
+    }
+
+    await photoRef.delete();
+    res.status(200).send('Photo deleted successfully.');
+  } catch (error) {
+    res.status(500).send((error as Error).message);
+  }
+};
