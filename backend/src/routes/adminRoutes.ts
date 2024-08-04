@@ -9,7 +9,7 @@ adminRoutes.put('/updateProduct',  editProduct);
 adminRoutes.delete('/deleteProduct/:id',  deleteProduct);
 adminRoutes.get('/product/:id',  getProductById);
 adminRoutes.get('/orders',  getAllOrders);
-
+adminRoutes.put('/editProduct',  editProduct);
 // adminRoutes.get('/orders', adminAuthMiddleware, getOrders);
 // adminRoutes.post('/orders/respond', adminAuthMiddleware, respondToOrder);
 
