@@ -18,11 +18,7 @@ interface Product {
 
 const Home: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [galleryImages, setGalleryImages] = useState<string[]>([
-    "/g1.jpg", // Example image
-    "/g2.jpg", // Example image
-    "/g3.jpg", // Example image
-  ]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
 
   useEffect(() => {
     // Fetch actual products from your API
@@ -32,6 +28,15 @@ const Home: React.FC = () => {
       })
       .catch((error) => {
         console.error("Error fetching products:", error);
+      });
+
+    // Fetch gallery images from your API
+    axios.get("https://amaria-backend.vercel.app/api/admin/getAllPhotos")
+      .then((response) => {
+        setGalleryImages(response.data.map((photo: { url: string }) => photo.url));
+      })
+      .catch((error) => {
+        console.error("Error fetching gallery images:", error);
       });
   }, []);
 
