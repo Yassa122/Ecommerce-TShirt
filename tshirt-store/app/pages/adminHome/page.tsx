@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { HiMenuAlt1 } from "react-icons/hi"; // Importing the icon for the sidebar toggle button
+import { HiMenuAlt1 } from "react-icons/hi";
 import AddProduct from "../addProduct/page";
 
 ChartJS.register(
@@ -70,7 +70,7 @@ const AdminHome = () => {
       const transformedOrders = response.data.map((order: any) => ({
         date: new Date(order.orderedAt._seconds * 1000).toLocaleDateString(),
         total: order.TotalPrice,
-        deliveryFee: order.deliveryFee || 0,  // Assuming deliveryFee is part of the order data
+        deliveryFee: order.deliveryFee || 0,
         netWorth: order.TotalPrice - (order.deliveryFee || 0)
       }));
       setOrders(transformedOrders);
@@ -90,7 +90,6 @@ const AdminHome = () => {
     localStorage.setItem("darkMode", darkMode.toString());
   }, [darkMode]);
 
-  // Calculate total net worth and delivery fees
   const totalNetWorth = orders.reduce((sum, order) => sum + order.netWorth, 0);
   const totalDeliveryFees = orders.reduce((sum, order) => sum + order.deliveryFee, 0);
 
@@ -169,7 +168,7 @@ const AdminHome = () => {
   };
 
   return (
-    <div className={`${darkMode ? "dark" : ""} flex min-h-screen`}>
+    <div className={`${darkMode ? "dark" : ""} flex min-h-screen font-sans`}>
       <Sidebar
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -186,7 +185,7 @@ const AdminHome = () => {
       </div>
 
       <main className="flex-1 p-8 bg-gray-100 dark:bg-black transition-all duration-300 ease-in-out">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
           <h1 className="text-3xl font-semibold text-gray-700 dark:text-gray-300">Dashboard</h1>
           <div className="w-full md:w-1/3">
             <input
@@ -202,14 +201,13 @@ const AdminHome = () => {
           {filteredProducts.map((product) => (
             <motion.div
               key={product.id}
-              className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg cursor-pointer"
+              className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg cursor-pointer transform transition duration-300 hover:scale-105"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              whileHover={{ scale: 1.02 }}
               onClick={() => handleCardClick(product.id)}
             >
-              <img src={product.Images[0]} alt={product.ProductName} className="mb-4 max-h-40 w-full object-cover rounded-md" />
+              <img src={product.Images[0]} alt={product.ProductName} width={500} height={500} className="mb-4 max-h-40 w-full object-cover rounded-md" />
               <div className="mb-2">
                 <input
                   type="text"
