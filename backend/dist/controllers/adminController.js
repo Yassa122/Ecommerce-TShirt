@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllProducts = exports.deleteProduct = exports.editProduct = exports.getProductById = exports.addProduct = void 0;
+exports.deletePhoto = exports.getAllPhotos = exports.addPhoto = exports.getAllOrders = exports.getAllProducts = exports.deleteProduct = exports.editProduct = exports.getProductById = exports.addProduct = void 0;
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
 const multer_1 = __importDefault(require("multer"));
 const db = firebase_admin_1.default.firestore();
@@ -85,33 +85,50 @@ const getProductById = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getProductById = getProductById;
 // Function to edit a product by ID
 const editProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const { ProductName, Price, Type, Sizes } = req.body;
-    try {
-        const productRef = db.collection('products').doc(id);
-        const productDoc = yield productRef.get();
-        if (!productDoc.exists) {
-            return res.status(404).send('Product not found.');
+    upload.single('image')(req, res, (err) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(500).send(err.message);
         }
-        // Parse Sizes if provided
-        let parsedSizes;
-        if (Sizes) {
-            try {
-                parsedSizes = JSON.parse(Sizes);
+        const { id } = req.params;
+        const { ProductName, Price, Type, Sizes } = req.body;
+        try {
+            const productRef = db.collection('products').doc(id);
+            const productDoc = yield productRef.get();
+            if (!productDoc.exists) {
+                return res.status(404).send('Product not found.');
             }
-            catch (parseError) {
-                return res.status(400).send('Invalid Sizes format. Expected a JSON string.');
+            let imageUrl;
+            if (req.file) {
+                const file = req.file;
+                const imageName = `${Date.now()}-${file.originalname}`;
+                const fileUpload = storage.file(imageName);
+                yield fileUpload.save(file.buffer, {
+                    metadata: {
+                        contentType: file.mimetype,
+                    },
+                });
+                imageUrl = `https://storage.googleapis.com/${storage.name}/${fileUpload.name}`;
             }
-            if (!Array.isArray(parsedSizes)) {
-                return res.status(400).send('Sizes should be an array.');
+            // Parse Sizes if provided
+            let parsedSizes;
+            if (Sizes) {
+                try {
+                    parsedSizes = JSON.parse(Sizes);
+                }
+                catch (parseError) {
+                    return res.status(400).send('Invalid Sizes format. Expected a JSON string.');
+                }
+                if (!Array.isArray(parsedSizes)) {
+                    return res.status(400).send('Sizes should be an array.');
+                }
             }
+            yield productRef.update(Object.assign(Object.assign({ ProductName, Price: parseFloat(Price), Type }, (parsedSizes && { Sizes: parsedSizes })), (imageUrl && { Images: [imageUrl] })));
+            res.status(200).send('Product updated successfully.');
         }
-        yield productRef.update(Object.assign({ ProductName, Price: parseFloat(Price), Type }, (parsedSizes && { Sizes: parsedSizes })));
-        res.status(200).send('Product updated successfully.');
-    }
-    catch (error) {
-        res.status(500).send(error.message);
-    }
+        catch (error) {
+            res.status(500).send(error.message);
+        }
+    }));
 });
 exports.editProduct = editProduct;
 // Function to delete a product by ID
@@ -143,3 +160,77 @@ const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getAllProducts = getAllProducts;
+const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const productsSnapshot = yield db.collection('Orders').get();
+        const Orders = productsSnapshot.docs.map(doc => (Object.assign({ id: doc.id }, doc.data())));
+        res.status(200).json(Orders);
+    }
+    catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+exports.getAllOrders = getAllOrders;
+const addPhoto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    upload.array('image')(req, res, (err) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(500).send(err.message);
+        }
+        if (!req.files || !Array.isArray(req.files)) {
+            return res.status(400).send('No files uploaded.');
+        }
+        try {
+            const fileUrls = yield Promise.all(req.files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+                const imageName = `${Date.now()}-${file.originalname}`;
+                const fileUpload = storage.file(imageName);
+                yield fileUpload.save(file.buffer, {
+                    metadata: {
+                        contentType: file.mimetype,
+                    },
+                });
+                return `https://storage.googleapis.com/${storage.name}/${fileUpload.name}`;
+            })));
+            const photoRefs = yield Promise.all(fileUrls.map((url) => __awaiter(void 0, void 0, void 0, function* () {
+                const photoRef = yield db.collection('gallery').add({
+                    url,
+                    createdAt: firebase_admin_1.default.firestore.FieldValue.serverTimestamp(),
+                });
+                return { id: photoRef.id, url };
+            })));
+            res.status(201).send(photoRefs);
+        }
+        catch (error) {
+            res.status(500).send(error.message);
+        }
+    }));
+});
+exports.addPhoto = addPhoto;
+// Get All Photos
+const getAllPhotos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const photosSnapshot = yield db.collection('gallery').get();
+        const photos = photosSnapshot.docs.map(doc => (Object.assign({ id: doc.id }, doc.data())));
+        res.status(200).json(photos);
+    }
+    catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+exports.getAllPhotos = getAllPhotos;
+// Delete Photo
+const deletePhoto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const photoRef = db.collection('gallery').doc(id);
+        const photoDoc = yield photoRef.get();
+        if (!photoDoc.exists) {
+            return res.status(404).send('Photo not found.');
+        }
+        yield photoRef.delete();
+        res.status(200).send('Photo deleted successfully.');
+    }
+    catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+exports.deletePhoto = deletePhoto;

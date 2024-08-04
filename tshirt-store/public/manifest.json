@@ -22,7 +22,7 @@
     ],
     "theme_color": "#FFFFFF",
     "background_color": "#FFFFFF",
-    "start_url": "/pages/adminHome",
+    "start_url": "/pages/signin",
     "display": "standalone",
     "orientation": "portrait"
   }

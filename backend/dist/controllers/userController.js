@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCartItems = exports.addToCart = exports.getProductById = exports.getProducts = void 0;
+exports.checkout = exports.getCartItems = exports.addToCart = exports.getProductById = exports.getProducts = void 0;
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
+const mailer_1 = require("../config/mailer");
 const db = firebase_admin_1.default.firestore();
 const storage = firebase_admin_1.default.storage().bucket();
 // Function to get all products
@@ -86,3 +87,66 @@ const getCartItems = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getCartItems = getCartItems;
+// Enable ignoreUndefinedProperties
+firebase_admin_1.default.firestore().settings({ ignoreUndefinedProperties: true });
+const sendNotification = (message) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield firebase_admin_1.default.messaging().send(message);
+        console.log('Notification sent successfully');
+    }
+    catch (error) {
+        console.error('Error sending notification:', error);
+    }
+});
+const checkout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { cartItems, shippingInfo, deliveryFee } = req.body;
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return res.status(400).send('Cart items are required.');
+    }
+    try {
+        // Create a batch to perform all the operations atomically
+        const batch = db.batch();
+        // Process each cart item
+        const orderDetails = cartItems.map(item => {
+            const orderRef = db.collection('Orders').doc();
+            batch.set(orderRef, {
+                ProductName: item.ProductName,
+                ProductId: item.id,
+                Quantity: item.Quantity,
+                TotalPrice: item.TotalPrice,
+                Images: item.Images,
+                selectedSize: item.selectedSize,
+                deliveryFee: item.deliveryFee,
+                orderId: orderRef.id,
+                status: 'Pending',
+                orderedAt: firebase_admin_1.default.firestore.FieldValue.serverTimestamp()
+            });
+            return {
+                ProductName: item.ProductName,
+                ProductId: item.id,
+                Quantity: item.Quantity,
+                TotalPrice: item.TotalPrice,
+                selectedSize: item.selectedSize,
+                deliveryFee: item.deliveryFee,
+            };
+        });
+        // Commit the batch
+        yield batch.commit();
+        // Send confirmation email
+        (0, mailer_1.sendOrderConfirmationEmail)(shippingInfo.email, orderDetails);
+        // Send notification to admin
+        const message = {
+            notification: {
+                title: 'New Order Received',
+                body: `Order from ${shippingInfo.email} has been placed.`,
+            },
+            topic: 'admin-notifications', // Ensure the admin is subscribed to this topic
+        };
+        yield sendNotification(message);
+        res.status(201).send('Checkout successful, orders placed.');
+    }
+    catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+exports.checkout = checkout;

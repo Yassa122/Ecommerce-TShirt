@@ -51,8 +51,8 @@ const Home: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          <h1 className="text-6xl font-bold mb-4">Discover Your Style</h1>
-          <p className="text-xl mb-8">Shop the latest trends in T-shirts</p>
+          <h1 className="text-6xl font-bold mb-4">It girl essentials</h1>
+          <p className="text-xl mb-8">Shop the latest trends</p>
           <Link href="/pages/products" legacyBehavior>
             <a className="bg-blue-500 dark:bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-400 dark:hover:bg-blue-600 transition">
               Shop Now

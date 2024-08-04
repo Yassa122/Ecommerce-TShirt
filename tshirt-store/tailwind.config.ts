@@ -7,9 +7,11 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: 'class', // Enable class-based dark mode
-
   theme: {
     extend: {
+      colors: {
+        customGray: '#7b7b7b',
+      },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
@@ -22,4 +24,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;

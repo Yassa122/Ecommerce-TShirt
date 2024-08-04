@@ -57,6 +57,13 @@ const AdminHome = () => {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
 
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/pages/signin');
+    }
+  }, [router]);
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);

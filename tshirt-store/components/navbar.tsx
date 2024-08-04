@@ -35,11 +35,13 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-zinc-900 dark:bg-zinc-200 text-white dark:text-black p-4">
+    <nav className="bg-customGray text-white  p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" legacyBehavior>
-          <a className="text-2xl font-bold">T-Shirt Store</a>
-        </Link>
+      <Link href="/" legacyBehavior>
+      <a className="flex items-center text-2xl font-bold">
+        <img src="/amaria.jpg" alt="T-Shirt Logo" className=" h-8 mr-2" />
+      </a>
+    </Link>
         <div className="hidden md:flex space-x-4 items-center">
           <Link href="/" legacyBehavior>
             <a className="hover:text-blue-400 transition">Home</a>

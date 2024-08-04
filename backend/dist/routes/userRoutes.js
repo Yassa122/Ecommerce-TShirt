@@ -10,4 +10,5 @@ console.log('Registering /products route');
 userRoutes.get('/products', userController_1.getProducts);
 userRoutes.get('/products/:id', userController_1.getProductById);
 userRoutes.post('/cart', userController_1.addToCart);
+userRoutes.post('/checkout', userController_1.checkout);
 exports.default = userRoutes;
