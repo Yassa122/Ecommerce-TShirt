@@ -1,5 +1,6 @@
 "use client";
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import Sidebar from '../../../components/sidebar';
@@ -9,10 +10,27 @@ const Gallery = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    // Fetch photos from the backend
+    axios.get('https://amaria-backend.vercel.app/api/admin/getAllPhotos')
+      .then(response => setPhotos(response.data.map((photo: { url: string }) => photo.url)))
+      .catch(error => console.error('Error fetching photos:', error));
+  }, []);
+
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      const uploadedPhotos = Array.from(event.target.files).map(file => URL.createObjectURL(file));
-      setPhotos([...photos, ...uploadedPhotos]);
+      const formData = new FormData();
+      Array.from(event.target.files).forEach(file => formData.append('image', file));
+      
+      axios.post('https://amaria-backend.vercel.app/api/admin/addPhoto', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        setPhotos([...photos, ...response.data.map((photo: { url: string }) => photo.url)]);
+      })
+      .catch(error => console.error('Error uploading photos:', error));
     }
   };
 
@@ -21,7 +39,7 @@ const Gallery = () => {
   };
 
   return (
-    <div className={`min-h-screen flex ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`min-h-screen flex ${darkMode ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}>
       <Sidebar
         darkMode={darkMode}
         setDarkMode={setDarkMode}
