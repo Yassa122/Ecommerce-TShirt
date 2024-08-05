@@ -2,6 +2,7 @@
 import Sidebar from '@/components/sidebar';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaEdit, FaPlusCircle, FaTrash } from 'react-icons/fa';
 
@@ -30,6 +31,16 @@ const ProductDetail: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [newSize, setNewSize] = useState<Size>({ size: '', quantity: 0 });
   const [newImage, setNewImage] = useState<File | null>(null);
+
+
+const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/pages/signin');
+    }
+  }, [router]);
 
   useEffect(() => {
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
