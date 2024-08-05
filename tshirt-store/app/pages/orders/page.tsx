@@ -2,6 +2,7 @@
 "use client";
 import Sidebar from '@/components/sidebar';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FaSort } from 'react-icons/fa'; // Import the sort icon from react-icons
 
@@ -27,7 +28,14 @@ const OrdersPage: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'card'>('card');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const router = useRouter();
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/pages/signin');
+    }
+  }, [router]);
   useEffect(() => {
     const fetchOrders = async () => {
       try {
