@@ -65,7 +65,7 @@ const Home: React.FC = () => {
           <Carousel images={galleryImages} autoPlay={true} />
         </div>
 
-        {/* Products Section */}
+        {/* Featured Products Section */}
         <h2 id="products" className="text-4xl font-bold text-center my-8">Our Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-8">
           {products.map((product) => (
@@ -93,6 +93,61 @@ const Home: React.FC = () => {
               </motion.div>
             </motion.div>
           ))}
+        </div>
+
+        {/* About Us Section */}
+        <motion.div
+          className="about-us bg-zinc-900 dark:bg-white text-white dark:text-black py-16 px-4 text-center rounded-lg shadow-2xl my-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <h2 className="text-4xl font-bold mb-4">About Us</h2>
+          <p className="text-lg mb-8">We are committed to providing the best products for fashion-forward individuals. Our mission is to bring you the latest trends and essentials for your wardrobe.</p>
+          <Link href="/pages/about" legacyBehavior>
+            <a className="bg-blue-500 dark:bg-blue-700 text-white px-6 py-3 rounded-lg hover:bg-blue-400 dark:hover:bg-blue-600 transition">
+              Learn More
+            </a>
+          </Link>
+        </motion.div>
+
+        {/* Testimonials Section */}
+        <div className="testimonials my-8">
+          <h2 className="text-4xl font-bold text-center mb-8">What Our Customers Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Testimonial 1 */}
+            <motion.div
+              className="testimonial bg-zinc-900 dark:bg-white text-white dark:text-black p-8 rounded-lg shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              <p className="text-lg mb-4">"Amazing products! The quality is top-notch and the service is outstanding."</p>
+              <p className="text-sm font-bold">- Jane Doe</p>
+            </motion.div>
+
+            {/* Testimonial 2 */}
+            <motion.div
+              className="testimonial bg-zinc-900 dark:bg-white text-white dark:text-black p-8 rounded-lg shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              <p className="text-lg mb-4">"I love shopping here. The collection is always up-to-date with the latest trends."</p>
+              <p className="text-sm font-bold">- John Smith</p>
+            </motion.div>
+
+            {/* Testimonial 3 */}
+            <motion.div
+              className="testimonial bg-zinc-900 dark:bg-white text-white dark:text-black p-8 rounded-lg shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              <p className="text-lg mb-4">"Great experience! Fast shipping and excellent customer support."</p>
+              <p className="text-sm font-bold">- Emily Johnson</p>
+            </motion.div>
+          </div>
         </div>
       </div>
 
