@@ -1,19 +1,28 @@
 "use client";
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { HiMenuAlt1 } from 'react-icons/hi';
 import Sidebar from '../../../components/sidebar';
 
 const Gallery = () => {
-  const [photos, setPhotos] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<{ id: string, url: string }[]>([]);
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/pages/signin');
+    }
+  }, [router]);
 
   useEffect(() => {
     // Fetch photos from the backend
     axios.get('https://amaria-backend.vercel.app/api/admin/getAllPhotos')
-      .then(response => setPhotos(response.data.map((photo: { url: string }) => photo.url)))
+      .then(response => setPhotos(response.data))
       .catch(error => console.error('Error fetching photos:', error));
   }, []);
 
@@ -21,17 +30,25 @@ const Gallery = () => {
     if (event.target.files) {
       const formData = new FormData();
       Array.from(event.target.files).forEach(file => formData.append('image', file));
-      
+
       axios.post('https://amaria-backend.vercel.app/api/admin/addPhoto', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       .then(response => {
-        setPhotos([...photos, ...response.data.map((photo: { url: string }) => photo.url)]);
+        setPhotos([...photos, ...response.data]);
       })
       .catch(error => console.error('Error uploading photos:', error));
     }
+  };
+
+  const handlePhotoDelete = (id: string) => {
+    axios.delete(`https://amaria-backend.vercel.app/api/admin/deletePhoto/${id}`)
+      .then(() => {
+        setPhotos(photos.filter(photo => photo.id !== id));
+      })
+      .catch(error => console.error('Error deleting photo:', error));
   };
 
   const toggleSidebar = () => {
@@ -84,9 +101,15 @@ const Gallery = () => {
             </div>
           </div>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {photos.map((photo, index) => (
-              <div key={index} className="relative">
-                <img src={photo} alt={`Gallery Photo ${index + 1}`} className="w-full h-48 object-cover rounded-lg shadow-md" />
+            {photos.map((photo) => (
+              <div key={photo.id} className="relative">
+                <img src={photo.url} alt={`Gallery Photo ${photo.id}`} className="w-full h-48 object-cover rounded-lg shadow-md" />
+                <button 
+                  onClick={() => handlePhotoDelete(photo.id)} 
+                  className="absolute top-2 right-2 text-red-500 bg-white rounded-full p-1 shadow-md hover:bg-red-500 hover:text-white transition"
+                >
+                  <FaTrash />
+                </button>
               </div>
             ))}
           </div>
