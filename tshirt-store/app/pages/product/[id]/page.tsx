@@ -2,7 +2,11 @@
 import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
 import axios from 'axios';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { FaShoppingCart } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Size {
   size: string;
@@ -21,7 +25,6 @@ interface Product {
 const ProductDetail: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [cartMessage, setCartMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,9 +66,19 @@ const ProductDetail: React.FC = () => {
       };
       cartItems.push(newItem);
       localStorage.setItem('cartItems', JSON.stringify(cartItems));
-      setCartMessage("Product added to cart!");
+      toast.success(
+        <div className="flex items-center justify-between">
+          Product added to cart!
+          <Link href="/pages/Cart">
+            <div className="flex items-center text-blue-500 hover:text-blue-700 transition">
+              <FaShoppingCart className="ml-2" />
+            </div>
+          </Link>
+        </div>,
+        { position: "top-center" }
+      );
     } else {
-      setCartMessage("Please select a size.");
+      toast.error("Please select a size.", { position: "top-center" });
     }
   };
 
@@ -113,7 +126,6 @@ const ProductDetail: React.FC = () => {
                 >
                   Add to Cart
                 </button>
-                {cartMessage && <p className="mt-4 text-red-500">{cartMessage}</p>}
               </>
             ) : (
               <p>Product not found.</p>
@@ -122,6 +134,7 @@ const ProductDetail: React.FC = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer />
     </div>
   );
 };
