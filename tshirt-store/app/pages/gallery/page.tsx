@@ -21,7 +21,7 @@ const Gallery = () => {
 
   useEffect(() => {
     // Fetch photos from the backend
-    axios.get('http://localhost:3000/api/admin/getAllPhotos')
+    axios.get('https://amaria-backend.vercel.app/api/admin/getAllPhotos')
       .then(response => setPhotos(response.data.map((photo: { url: string }) => photo.url)))
       .catch(error => console.error('Error fetching photos:', error));
   }, []);
@@ -31,7 +31,7 @@ const Gallery = () => {
       const formData = new FormData();
       Array.from(event.target.files).forEach(file => formData.append('image', file));
       
-      axios.post('http://localhost:3000/api/admin/addPhoto', formData, {
+      axios.post('https://amaria-backend.vercel.app/api/admin/addPhoto', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -44,7 +44,7 @@ const Gallery = () => {
   };
 
   const handlePhotoDelete = (id: string) => {
-    axios.delete(`http://localhost:3000/api/admin/deletePhoto/${id}`)
+    axios.delete(`https://amaria-backend.vercel.app/api/admin/deletePhoto/${id}`)
       .then(() => {
         setPhotos(photos.filter(photo => photo.id !== id));
       })
