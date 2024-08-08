@@ -30,7 +30,7 @@ const ProductList = () => {
 
   useEffect(() => {
     // Fetch products from the API
-    axios.get('http://localhost:3000/api/admin/getAllProducts')
+    axios.get('https://amaria-backend.vercel.app/api/admin/getAllProducts')
       .then(response => {
         setProducts(response.data);
       })
@@ -50,7 +50,7 @@ const ProductList = () => {
       // Convert Sizes to JSON string before sending the request
       const productToSave = { ...editProduct, Sizes: JSON.stringify(editProduct.Sizes) };
 
-      axios.put(`http://localhost:3000/api/admin/editProduct/${editProduct.id}`, productToSave)
+      axios.put(`https://amaria-backend.vercel.app/api/admin/editProduct/${editProduct.id}`, productToSave)
         .then(response => {
           const updatedProducts = [...products];
           updatedProducts[editIndex] = editProduct;
@@ -80,7 +80,7 @@ const ProductList = () => {
   };
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`)
+    axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`)
       .then(response => {
         setProducts(products.filter(product => product.id !== id));
       })

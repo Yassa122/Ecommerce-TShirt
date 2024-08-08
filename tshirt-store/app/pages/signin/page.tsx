@@ -22,7 +22,7 @@ export default function Login() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault(); // Prevent default form submission
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/signin", formData, {
+      const response = await axios.post("https://amaria-backend.vercel.app/api/auth/signin", formData, {
         headers: {
           "Content-Type": "application/json",
         },
