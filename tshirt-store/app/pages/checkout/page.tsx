@@ -1,4 +1,3 @@
-// pages/checkout.tsx
 "use client";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -40,7 +39,7 @@ const cairoAreas: Area[] = [
 ];
 
 const CheckoutPage: React.FC = () => {
-  const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", email: "" });
+  const [shippingInfo, setShippingInfo] = useState({ name: "", phone: "", address: "", area: "", email: "" });
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
@@ -72,8 +71,17 @@ const CheckoutPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("https://amaria-backend.vercel.app/api/users/checkout", { shippingInfo, cartItems, deliveryFee })
+    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems, deliveryFee })
       .then(response => {
+        const orderDetails = {
+          orderNumber: response.data.id, // Assuming order number is returned by the backend
+          orderDate: new Date().toLocaleDateString(),
+          totalAmount: totalPrice,
+          shippingInfo,
+          cartItems,
+          deliveryFee
+        };
+        localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
         alert("Order placed successfully!");
         localStorage.removeItem('cartItems'); // Clear the cart
         router.push("/pages/orderConfirmed");
@@ -108,6 +116,28 @@ const CheckoutPage: React.FC = () => {
             transition={{ delay: 0.2 }}
           >
             <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
+            <div className="mb-4">
+              <label className="block text-gray-300 dark:text-gray-700">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={shippingInfo.name}
+                onChange={handleShippingChange}
+                className="w-full p-2 border border-gray-600 dark:border-gray-300 rounded-lg bg-neutral-700 dark:bg-gray-200"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-300 dark:text-gray-700">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={shippingInfo.phone}
+                onChange={handleShippingChange}
+                className="w-full p-2 border border-gray-600 dark:border-gray-300 rounded-lg bg-neutral-700 dark:bg-gray-200"
+                required
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-gray-300 dark:text-gray-700">Address</label>
               <input
@@ -155,13 +185,13 @@ const CheckoutPage: React.FC = () => {
 
           {/* Order Summary */}
           <motion.div
-            className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black flex flex-col justify-between"
+            className="flex-1 bg-zinc-900 dark:bg-white shadow-md rounded-lg p-6 text-white dark:text-black flex flex-col justify-between mt-6 md:mt-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+              <h2 className="text-2xl font-semibold  mb-4">Order Summary</h2>
               {cartItems.map(item => (
                 <div key={item.id} className="flex justify-between items-center mb-4">
                   <div className="flex items-center">
