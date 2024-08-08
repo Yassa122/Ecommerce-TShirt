@@ -97,10 +97,15 @@ export const checkout = async (req: Request, res: Response) => {
     // Create a batch to perform all the operations atomically
     const batch = db.batch();
 
-    // Process each cart item
-    const orderDetails = cartItems.map(item => {
-      const orderRef = db.collection('Orders').doc();
-      batch.set(orderRef, {
+    // Create a new order document
+    const orderRef = db.collection('Orders').doc();
+
+    const orderData = {
+      shippingInfo,
+      deliveryFee,
+      status: 'Pending',
+      orderedAt: admin.firestore.FieldValue.serverTimestamp(),
+      items: cartItems.map(item => ({
         ProductName: item.ProductName,
         ProductId: item.id,
         Quantity: item.Quantity,
@@ -108,25 +113,20 @@ export const checkout = async (req: Request, res: Response) => {
         Images: item.Images,
         selectedSize: item.selectedSize,
         deliveryFee: item.deliveryFee,
-        orderId: orderRef.id,
-        status: 'Pending',
-        orderedAt: admin.firestore.FieldValue.serverTimestamp()
-      });
-      return {
-        ProductName: item.ProductName,
-        ProductId: item.id,
-        Quantity: item.Quantity,
-        TotalPrice: item.TotalPrice,
-        selectedSize: item.selectedSize,
-        deliveryFee: item.deliveryFee,
-      };
-    });
+      })),
+      orderId: orderRef.id,
+      phoneNumber: shippingInfo.phone, // Including phone number
+      email: shippingInfo.email, // Including email
+      address: shippingInfo.address // Including address
+    };
+
+    batch.set(orderRef, orderData);
 
     // Commit the batch
     await batch.commit();
 
     // Send confirmation email
-    sendOrderConfirmationEmail(shippingInfo.email, orderDetails);
+    sendOrderConfirmationEmail(shippingInfo.email, orderData);
 
     // Send notification to admin
     const message: admin.messaging.Message = {
@@ -139,7 +139,7 @@ export const checkout = async (req: Request, res: Response) => {
 
     await sendNotification(message);
 
-    res.status(201).send('Checkout successful, orders placed.');
+    res.status(201).send('Checkout successful, order placed.');
   } catch (error) {
     res.status(500).send((error as Error).message);
   }
