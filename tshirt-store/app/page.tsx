@@ -30,7 +30,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     // Fetch actual products from your API
-    axios.get("http://localhost:3000/api/users/products")
+    axios.get("https://amaria-backend.vercel.app/api/users/products")
       .then((response) => {
         setProducts(response.data);
       })
@@ -39,7 +39,7 @@ const Home: React.FC = () => {
       });
 
     // Fetch gallery images from your API
-    axios.get("http://localhost:3000/api/admin/getAllPhotos")
+    axios.get("https://amaria-backend.vercel.app/api/admin/getAllPhotos")
       .then((response) => {
         const slides = response.data.map((photo: { url: string }) => ({
           image: photo.url,
