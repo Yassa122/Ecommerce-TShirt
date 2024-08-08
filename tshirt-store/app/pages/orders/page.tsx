@@ -1,4 +1,3 @@
-// pages/orders.tsx
 "use client";
 import Sidebar from '@/components/sidebar';
 import axios from 'axios';
@@ -14,12 +13,20 @@ interface OrderItem {
   selectedSize: string;
 }
 
+interface ShippingInfo {
+  phone: string;
+  email: string;
+  address: string;
+}
+
 interface Order {
   id: string;
   orderedAt: Date;
   items: OrderItem[];
   total: number;
   status: string;
+  shippingInfo: ShippingInfo;
+  deliveryFee: number;
 }
 
 const OrdersPage: React.FC = () => {
@@ -36,27 +43,31 @@ const OrdersPage: React.FC = () => {
       router.push('/pages/signin');
     }
   }, [router]);
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('https://amaria-backend.vercel.app/api/admin/orders');
+        const response = await axios.get('http://localhost:3000/api/admin/orders');
         const fetchedOrders = response.data.map((doc: any) => {
-          const items = [{
-            ProductName: doc.ProductName,
-            Quantity: doc.Quantity,
-            TotalPrice: doc.TotalPrice,
-            Images: doc.Images,
-            selectedSize: doc.selectedSize
-          }];
+          const items = doc.items ? doc.items.map((item: any) => ({
+            ProductName: item.ProductName,
+            Quantity: item.Quantity,
+            TotalPrice: item.TotalPrice,
+            Images: item.Images,
+            selectedSize: item.selectedSize,
+          })) : [];
 
           return {
             id: doc.orderId,
-            orderedAt: new Date(doc.orderedAt._seconds * 1000 + doc.orderedAt._nanoseconds / 1000000),
+            orderedAt: doc.orderedAt ? new Date(doc.orderedAt._seconds * 1000 + doc.orderedAt._nanoseconds / 1000000) : new Date(),
             items: items,
-            total: items.reduce((sum, item) => sum + item.TotalPrice * item.Quantity, 0),
-            status: doc.status,
+            total: items.reduce((sum: number, item: { TotalPrice: number; Quantity: number; }) => sum + item.TotalPrice * item.Quantity, 0) + (doc.deliveryFee || 0),
+            status: doc.status || 'Pending',
+            shippingInfo: doc.shippingInfo || { phone: '', email: '', address: '' },
+            deliveryFee: doc.deliveryFee || 0,
           };
         });
+        console.log('Fetched Orders:', fetchedOrders);
         setOrders(fetchedOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -66,27 +77,24 @@ const OrdersPage: React.FC = () => {
     fetchOrders();
   }, []);
 
-  useEffect(() => {
-    const sortedOrders = [...orders].sort((a, b) => {
-      return sortOrder === 'newest'
-        ? b.orderedAt.getTime() - a.orderedAt.getTime()
-        : a.orderedAt.getTime() - b.orderedAt.getTime();
-    });
-    setOrders(sortedOrders);
-  }, [sortOrder, orders]);
+  const sortedOrders = orders.sort((a, b) => {
+    return sortOrder === 'newest'
+      ? b.orderedAt.getTime() - a.orderedAt.getTime()
+      : a.orderedAt.getTime() - b.orderedAt.getTime();
+  });
 
   const toggleViewMode = () => {
     setViewMode(viewMode === 'card' ? 'table' : 'card');
   };
 
   const downloadCSV = () => {
-    const csvContent = orders.map(order => {
+    const csvContent = sortedOrders.map(order => {
       return order.items.map(item => 
-        `${order.id},${order.orderedAt.toLocaleString()},${item.ProductName},${item.Quantity},${item.TotalPrice},${order.total},${order.status}`
+        `${order.id},${order.orderedAt.toLocaleString()},${item.ProductName},${item.Quantity},${item.TotalPrice},${order.total},${order.status},${order.shippingInfo.phone},${order.shippingInfo.email},${order.shippingInfo.address},${order.deliveryFee}`
       ).join('\n');
     }).join('\n');
 
-    const header = 'Order ID,Date,ProductName,Quantity,Price,Total,Status\n';
+    const header = 'Order ID,Date,ProductName,Quantity,Price,Total,Status,Phone,Email,Address,Delivery Fee\n';
     const csv = header + csvContent;
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -134,6 +142,9 @@ const OrdersPage: React.FC = () => {
               <div key={order.id} className={`p-4 rounded-lg shadow-lg ${darkMode ? 'bg-zinc-900' : 'bg-white'}`}>
                 <h2 className="text-xl font-semibold mb-2">Order #{order.id}</h2>
                 <p className="text-sm mb-4">Date: {order.orderedAt.toLocaleString()}</p>
+                <p className="text-sm mb-4">Phone: {order.shippingInfo.phone}</p>
+                <p className="text-sm mb-4">Email: {order.shippingInfo.email}</p>
+                <p className="text-sm mb-4">Address: {order.shippingInfo.address}</p>
                 <div className="mb-4">
                   {order.items.map((item, index) => (
                     <div key={index} className="flex items-center mb-2">
@@ -141,6 +152,7 @@ const OrdersPage: React.FC = () => {
                       <div>
                         <p className="font-medium">{item.ProductName}</p>
                         <p className="text-sm">Quantity: {item.Quantity}</p>
+                        <p className="text-sm">Size: {item.selectedSize}</p>
                         <p className="text-sm">Price: ${item.TotalPrice}</p>
                       </div>
                     </div>
@@ -164,6 +176,9 @@ const OrdersPage: React.FC = () => {
                   <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Date</th>
                   <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Items</th>
                   <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Total</th>
+                  <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Phone</th>
+                  <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Email</th>
+                  <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Address</th>
                   <th className="px-2 md:px-4 py-2 border-b dark:border-gray-700">Status</th>
                 </tr>
               </thead>
@@ -184,6 +199,9 @@ const OrdersPage: React.FC = () => {
                       ))}
                     </td>
                     <td className="px-2 md:px-4 py-2">${order.total.toFixed(2)}</td>
+                    <td className="px-2 md:px-4 py-2">{order.shippingInfo.phone}</td>
+                    <td className="px-2 md:px-4 py-2">{order.shippingInfo.email}</td>
+                    <td className="px-2 md:px-4 py-2">{order.shippingInfo.address}</td>
                     <td className="px-2 md:px-4 py-2">
                       <span className={`px-2 py-1 rounded ${order.status === 'Shipped' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-black'}`}>
                         {order.status}
