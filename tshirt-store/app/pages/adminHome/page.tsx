@@ -68,12 +68,12 @@ const AdminHome = () => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
 
-    axios.get("https://amaria-backend.vercel.app/api/admin/getAllProducts").then((response) => {
+    axios.get("http://localhost:3000/api/admin/getAllProducts").then((response) => {
       setProducts(response.data);
       setFilteredProducts(response.data);
     });
 
-    axios.get("https://amaria-backend.vercel.app/api/admin/orders").then((response) => {
+    axios.get("http://localhost:3000/api/admin/orders").then((response) => {
       const transformedOrders = response.data.map((order: any) => ({
         date: new Date(order.orderedAt._seconds * 1000).toLocaleDateString(),
         total: order.TotalPrice,
@@ -143,7 +143,7 @@ const AdminHome = () => {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
+        await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");
