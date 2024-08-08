@@ -18,7 +18,7 @@ app.use(cookieParser()); // Parse cookies
 const port = process.env.PORT || 3000;
 
 // Get CORS origin from environment variable
-const corsOrigin = "https://amaria-local.vercel.app"; // Use the CORS origin from environment variables
+const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3001"; // Use the CORS origin from environment variables
 console.log('Registering routes');
 app.use(cors({
   origin: corsOrigin, // Use the CORS origin from environment variables
