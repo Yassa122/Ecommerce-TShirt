@@ -1,4 +1,3 @@
-// pages/productsList.tsx
 "use client";
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -29,11 +28,9 @@ const ProductList = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [showAddProductModal, setShowAddProductModal] = useState<boolean>(false);
 
-
-  //https://amaria-backend.vercel.app/
   useEffect(() => {
     // Fetch products from the API
-    axios.get('https://amaria-backend.vercel.app/api/admin/getAllProducts')
+    axios.get('http://localhost:3000/api/admin/getAllProducts')
       .then(response => {
         setProducts(response.data);
       })
@@ -48,20 +45,46 @@ const ProductList = () => {
   };
 
   const handleSave = () => {
-    // Save the edited product (you can also send this data to the server)
+    // Save the edited product
     if (editProduct !== null && editIndex !== null) {
-      const updatedProducts = [...products];
-      updatedProducts[editIndex] = editProduct;
-      setProducts(updatedProducts);
-      setEditIndex(null);
-      setEditProduct(null);
+      // Convert Sizes to JSON string before sending the request
+      const productToSave = { ...editProduct, Sizes: JSON.stringify(editProduct.Sizes) };
+
+      axios.put(`http://localhost:3000/api/admin/editProduct/${editProduct.id}`, productToSave)
+        .then(response => {
+          const updatedProducts = [...products];
+          updatedProducts[editIndex] = editProduct;
+          setProducts(updatedProducts);
+          setEditIndex(null);
+          setEditProduct(null);
+        })
+        .catch(error => console.error("Error updating product:", error));
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number) => {
     if (editProduct !== null) {
-      setEditProduct({ ...editProduct, [e.target.name]: e.target.value });
+      const { name, value } = e.target;
+      if (name === "quantity" && index !== undefined) {
+        const updatedSizes = [...editProduct.Sizes];
+        updatedSizes[index] = { ...updatedSizes[index], quantity: parseInt(value, 10) };
+        setEditProduct({ ...editProduct, Sizes: updatedSizes });
+      } else if (name === "size" && index !== undefined) {
+        const updatedSizes = [...editProduct.Sizes];
+        updatedSizes[index] = { ...updatedSizes[index], size: value };
+        setEditProduct({ ...editProduct, Sizes: updatedSizes });
+      } else {
+        setEditProduct({ ...editProduct, [name]: value });
+      }
     }
+  };
+
+  const handleDelete = (id: string) => {
+    axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`)
+      .then(response => {
+        setProducts(products.filter(product => product.id !== id));
+      })
+      .catch(error => console.error("Error deleting product:", error));
   };
 
   const toggleAddProductModal = () => {
@@ -144,9 +167,9 @@ const ProductList = () => {
                     <td className="px-6 py-4 whitespace-nowrap overflow-ellipsis overflow-hidden">
                       {editIndex === idx ? (
                         <input
-                          type="text"
+                          type="number"
                           name="Price"
-                          value={editProduct?.Price || ''}
+                          value={editProduct?.Price || 0}
                           onChange={handleChange}
                           className={`border rounded-lg p-2 w-full ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
                         />
@@ -168,27 +191,69 @@ const ProductList = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap overflow-ellipsis overflow-hidden">
-                      {product.Sizes.map(size => (
-                        <span key={size.size} className="block">
-                          {size.size}: {size.quantity}
-                        </span>
-                      ))}
+                      {editIndex === idx ? (
+                        <div>
+                          {editProduct?.Sizes.map((size, sizeIndex) => (
+                            <div key={sizeIndex} className="flex items-center mb-2">
+                              <input
+                                type="text"
+                                name="size"
+                                value={size.size}
+                                onChange={(e) => handleChange(e, sizeIndex)}
+                                className={`border rounded-lg p-2 w-1/3 ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'} mr-2`}
+                              />
+                              <input
+                                type="number"
+                                name="quantity"
+                                value={size.quantity}
+                                onChange={(e) => handleChange(e, sizeIndex)}
+                                className={`border rounded-lg p-2 w-2/3 ${darkMode ? 'bg-neutral-800 text-neutral-300' : 'bg-white text-black'}`}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        product.Sizes.map(size => (
+                          <span key={size.size} className="block">
+                            {size.size}: {size.quantity}
+                          </span>
+                        ))
+                      )}
                     </td>
                     <td className="text-right px-6 whitespace-nowrap">
                       {editIndex === idx ? (
-                        <button
-                          onClick={handleSave}
-                          className="py-2 px-4 font-medium text-green-500 hover:text-green-400"
-                        >
-                          Save
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={handleSave}
+                            className="py-2 px-4 font-medium text-green-500 hover:text-green-400"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditIndex(null);
+                              setEditProduct(null);
+                            }}
+                            className="py-2 px-4 font-medium text-red-500 hover:text-red-400"
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       ) : (
-                        <button
-                          onClick={() => handleEdit(idx)}
-                          className="py-2 px-4 font-medium text-indigo-500 hover:text-indigo-400"
-                        >
-                          Edit
-                        </button>
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => handleEdit(idx)}
+                            className="py-2 px-4 font-medium text-indigo-500 hover:text-indigo-400"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            className="py-2 px-4 font-medium text-red-500 hover:text-red-400"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
