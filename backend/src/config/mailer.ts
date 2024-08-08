@@ -22,7 +22,7 @@ export const sendOrderConfirmationEmail = (email: string, orderDetails: any): vo
           <h3 style="color: #f0f0f0;">Thank you for your order!</h3>
           <p style="color: #f0f0f0;">We are delighted to confirm your order. Below are the details:</p>
           <hr style="border: 1px solid #555;">
-          ${orderDetails.map((item: any) => `
+          ${orderDetails.items.map((item: any) => `
             <div style="margin-bottom: 15px;">
               <p><strong style="color: #FFD700;">Product:</strong> ${item.ProductName}</p>
               <p><strong style="color: #FFD700;">Size:</strong> ${item.selectedSize}</p>
@@ -31,7 +31,11 @@ export const sendOrderConfirmationEmail = (email: string, orderDetails: any): vo
             </div>
             <hr style="border: 1px solid #555;">
           `).join('')}
-          <h3 style="color: #f0f0f0;">Total: $${orderDetails.reduce((total: number, item: any) => total + item.TotalPrice, 0).toFixed(2)}</h3>
+          <h3 style="color: #f0f0f0;">Total: $${orderDetails.items.reduce((total: number, item: any) => total + item.TotalPrice, 0).toFixed(2)}</h3>
+          <p style="color: #f0f0f0;"><strong>Delivery Fee:</strong> $${orderDetails.deliveryFee.toFixed(2)}</p>
+          <p style="color: #f0f0f0;"><strong>Phone:</strong> ${orderDetails.phoneNumber}</p>
+          <p style="color: #f0f0f0;"><strong>Email:</strong> ${orderDetails.email}</p>
+          <p style="color: #f0f0f0;"><strong>Address:</strong> ${orderDetails.address}</p>
           <p style="color: #f0f0f0;">Your order will be shipped to you soon. We'll notify you once it's on the way!</p>
           <p style="color: #f0f0f0;">If you have any questions or concerns, feel free to <a href="mailto:amariaclothing.info@gmail.com" style="color: #FFD700;">contact us</a>.</p>
           <p style="color: #f0f0f0;">Thank you for shopping with us!</p>
