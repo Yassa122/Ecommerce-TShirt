@@ -1,4 +1,3 @@
-// pages/products.tsx
 "use client";
 import Footer from "@/components/footer";
 import axios from "axios";
@@ -23,7 +22,7 @@ const ProductPage: React.FC = () => {
 
   useEffect(() => {
     // Fetch products from the API
-    axios.get("https://amaria-backend.vercel.app/api/users/products")
+    axios.get("http://localhost:3000/api/users/products")
       .then(response => {
         setProducts(response.data);
       })
@@ -91,12 +90,12 @@ const ProductPage: React.FC = () => {
                   <div className="mt-2">
                     <strong>Sizes:</strong>
                     <div className="flex flex-wrap mt-1">
-                      {product.Sizes.map((sizeObj, index) => (
+                      {product.Sizes.filter(sizeObj => sizeObj.size !== 'Select Size').map((sizeObj, index) => (
                         <span
                           key={index}
                           className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-2 py-1 rounded-md mr-2 mb-2"
                         >
-                          {sizeObj.size} ({sizeObj.quantity})
+                          {sizeObj.size}
                         </span>
                       ))}
                     </div>
@@ -116,8 +115,7 @@ const ProductPage: React.FC = () => {
           )}
         </motion.div>
       </div>
-      <Footer/>
-
+      <Footer />
     </div>
   );
 };
