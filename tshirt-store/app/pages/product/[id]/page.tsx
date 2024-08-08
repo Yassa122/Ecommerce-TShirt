@@ -33,7 +33,7 @@ const ProductDetail: React.FC = () => {
 
     if (id) {
       console.log(`Fetching product details for ID: ${id}`);
-      axios.get(`http://localhost:3000/api/users/products/${id}`)
+      axios.get(`https://amaria-backend.vercel.app/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);
