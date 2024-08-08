@@ -33,7 +33,7 @@ const ProductDetail: React.FC = () => {
 
     if (id) {
       console.log(`Fetching product details for ID: ${id}`);
-      axios.get(`https://amaria-backend.vercel.app/api/users/products/${id}`)
+      axios.get(`http://localhost:3000/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);
@@ -106,13 +106,13 @@ const ProductDetail: React.FC = () => {
                   <h3 className="text-lg font-semibold mb-2">Available Sizes:</h3>
                   <div className="flex flex-wrap gap-4">
                     {product.Sizes && product.Sizes.length > 0 ? (
-                      product.Sizes.map((sizeObj: Size, index) => (
+                      product.Sizes.filter(sizeObj => sizeObj.size !== 'Select Size').map((sizeObj: Size, index) => (
                         <button
                           key={index}
                           className={`px-4 py-2 border rounded-lg ${selectedSize === sizeObj.size ? 'bg-blue-500 text-white' : 'dark:bg-gray-300 bg-zinc-700'}`}
                           onClick={() => handleSizeChange(sizeObj.size)}
                         >
-                          {sizeObj.size} ({sizeObj.quantity})
+                          {sizeObj.size}
                         </button>
                       ))
                     ) : (

@@ -3,7 +3,7 @@ import admin from 'firebase-admin';
 
 dotenv.config();
 
-const serviceAccount = require('./service-account-file.json');
+const serviceAccount = require('./e-commerce-t-shirt-firebase-adminsdk-ug3gf-d0aadc6e2b.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

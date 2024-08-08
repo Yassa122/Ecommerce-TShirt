@@ -18,12 +18,14 @@ app.use(cookieParser()); // Parse cookies
 const port = process.env.PORT || 3000;
 
 // Get CORS origin from environment variable
+
 const corsOrigin = "https://amaria-local.vercel.app"; // Use the CORS origin from environment variables
 console.log('Registering routes');
 app.use(cors({
-  origin: corsOrigin, // Use the CORS origin from environment variables
+  origin: corsOrigin, 
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
-  allowedHeaders: 'Content-Type,Authorization', // Allow only these headers
+  allowedHeaders: 'Content-Type,Authorization', 
+  credentials: true, // Allow cookies to be sent with requests
 }));
 
 app.use('/api/users', userRoutes); // Register user routes

@@ -1,4 +1,3 @@
-// pages/checkout.tsx
 "use client";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -40,7 +39,7 @@ const cairoAreas: Area[] = [
 ];
 
 const CheckoutPage: React.FC = () => {
-  const [shippingInfo, setShippingInfo] = useState({ address: "", area: "", email: "" });
+  const [shippingInfo, setShippingInfo] = useState({ name: "", phone: "", address: "", area: "", email: "" });
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
@@ -72,7 +71,7 @@ const CheckoutPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Send data to backend for processing
-    axios.post("https://amaria-backend.vercel.app/api/users/checkout", { shippingInfo, cartItems, deliveryFee })
+    axios.post("http://localhost:3000/api/users/checkout", { shippingInfo, cartItems, deliveryFee })
       .then(response => {
         alert("Order placed successfully!");
         localStorage.removeItem('cartItems'); // Clear the cart
@@ -108,6 +107,28 @@ const CheckoutPage: React.FC = () => {
             transition={{ delay: 0.2 }}
           >
             <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
+            <div className="mb-4">
+              <label className="block text-gray-300 dark:text-gray-700">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={shippingInfo.name}
+                onChange={handleShippingChange}
+                className="w-full p-2 border border-gray-600 dark:border-gray-300 rounded-lg bg-neutral-700 dark:bg-gray-200"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-300 dark:text-gray-700">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                value={shippingInfo.phone}
+                onChange={handleShippingChange}
+                className="w-full p-2 border border-gray-600 dark:border-gray-300 rounded-lg bg-neutral-700 dark:bg-gray-200"
+                required
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-gray-300 dark:text-gray-700">Address</label>
               <input
