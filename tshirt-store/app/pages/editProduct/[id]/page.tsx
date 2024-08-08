@@ -46,7 +46,7 @@ const router = useRouter();
     const id = window.location.pathname.split('/').pop(); // Extracting ID from the URL
 
     if (id) {
-      axios.get(`https://amaria-backend.vercel.app/api/users/products/${id}`)
+      axios.get(`http://localhost:3000/api/users/products/${id}`)
         .then(response => {
           setProduct(response.data);
           setLoading(false);
@@ -134,7 +134,7 @@ const router = useRouter();
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
+      await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
       alert("Product deleted successfully!");
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -153,7 +153,7 @@ const router = useRouter();
     }
 
     try {
-      await axios.put(`https://amaria-backend.vercel.app/api/admin/editProduct/${product!.id}`, formData, {
+      await axios.put(`http://localhost:3000/api/admin/editProduct/${product!.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
