@@ -66,29 +66,27 @@ const Home: React.FC = () => {
         <h2 id="products" className="text-4xl font-bold text-center my-8 text-white dark:text-black">Our Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-8">
           {products.map((product) => (
-            <motion.div
-              key={product.id}
-              className="relative bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className="w-full flex items-center justify-center" style={{ height: '300px' }}>
-                <img src={product.Images[0]} alt={product.ProductName} style={{ objectFit: 'cover' }} className="object-contain w-full h-full rounded-t-lg" />
-              </div>
-              <motion.div
-                className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
+            <Link href={`/pages/product/${product.id}`} key={product.id} legacyBehavior>
+              <motion.a
+                className="relative bg-zinc-900 dark:bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+                whileHover={{ scale: 1.05 }}
               >
-                <div className="text-center text-white">
-                  <h2 className="text-2xl font-bold mb-2">{product.ProductName}</h2>
-                  <p className="text-lg mb-4">{product.Type}</p>
-                  <p className="text-lg font-bold">${product.Price.toFixed(2)}</p>
-                  <Link href={`/pages/product/${product.id}`} legacyBehavior>
-                    <a className="text-blue-400 hover:text-blue-300 transition">View Product</a>
-                  </Link>
+                <div className="w-full flex items-center justify-center" style={{ height: '300px' }}>
+                  <img src={product.Images[0]} alt={product.ProductName} style={{ objectFit: 'cover' }} className="object-contain w-full h-full rounded-t-lg" />
                 </div>
-              </motion.div>
-            </motion.div>
+                <motion.div
+                  className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                >
+                  <div className="text-center text-white">
+                    <h2 className="text-2xl font-bold mb-2">{product.ProductName}</h2>
+                    <p className="text-lg mb-4">{product.Type}</p>
+                    <p className="text-lg font-bold">${product.Price.toFixed(2)}</p>
+                  </div>
+                </motion.div>
+              </motion.a>
+            </Link>
           ))}
         </div>
 
@@ -107,8 +105,6 @@ const Home: React.FC = () => {
             </a>
           </Link>
         </motion.div>
-
-
       </div>
 
       {/* Footer Section */}

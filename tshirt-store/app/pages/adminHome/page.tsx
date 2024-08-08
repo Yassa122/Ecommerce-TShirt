@@ -2,15 +2,15 @@
 import Sidebar from "@/components/sidebar";
 import axios from "axios";
 import {
-    ArcElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Title,
-    Tooltip,
+  ArcElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
 } from "chart.js";
 import { motion } from "framer-motion";
 import { useRouter } from 'next/navigation';
@@ -57,13 +57,13 @@ const AdminHome = () => {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
 
-
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/pages/signin');
     }
   }, [router]);
+
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
