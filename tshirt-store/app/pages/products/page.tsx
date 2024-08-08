@@ -60,7 +60,7 @@ const ProductPage: React.FC = () => {
             placeholder="Search products..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg  text-black border-gray-600"
           />
         </motion.div>
         <motion.div

@@ -14,8 +14,7 @@ const ContactPage: React.FC = () => {
         <div className="text-center mb-8">
           <p className="text-lg">Feel free to reach out to us via any of the following methods:</p>
           <div className="mt-4">
-            <p className="text-md"><strong>Email:</strong> contact@tshirtstore.com</p>
-            <p className="text-md"><strong>Phone:</strong> +123 456 7890</p>
+            <p className="text-md"><strong>Email:</strong> amariaclothing.info@gmail.com</p>
           </div>
         </div>
         
@@ -24,12 +23,12 @@ const ContactPage: React.FC = () => {
           <h2 className="text-2xl font-bold mb-4">Follow Us on Instagram</h2>
           <p className="text-lg mb-4">Stay updated with our latest products and promotions. Follow us on Instagram:</p>
           <a 
-            href="https://instagram.com/your-instagram-page" 
+            href="https://www.instagram.com/amariaa.eg" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-blue-500 dark:text-blue-700 hover:underline"
           >
-            @your_instagram_page
+            @instagram.com/amariaa.eg
           </a>
         </div>
         
