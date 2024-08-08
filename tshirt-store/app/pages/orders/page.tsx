@@ -47,7 +47,7 @@ const OrdersPage: React.FC = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/admin/orders');
+        const response = await axios.get('https://amaria-backend.vercel.app/api/admin/orders');
         const fetchedOrders = response.data.map((doc: any) => {
           const items = doc.items ? doc.items.map((item: any) => ({
             ProductName: item.ProductName,
