@@ -21,7 +21,7 @@ To set up the project locally, follow these steps:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ecommerce-mern-pwa.git
+git clone https://github.com/Yassa122/Ecommerce-TShirt.git
 
 # Navigate into the backend directory
 cd backend
