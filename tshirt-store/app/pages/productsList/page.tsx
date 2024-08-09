@@ -345,36 +345,78 @@ const ProductList = () => {
           ))}
         </div>
         <div>
-          {editProduct?.Images.map((image, imageIndex) => (
-            <div key={imageIndex} className="flex items-center gap-2 mb-2">
-              <input
-                type="text"
-                name="Images"
-                value={image}
-                onChange={(e) => handleChange(e, imageIndex)}
-                className="border rounded-lg p-2 w-full text-white bg-neutral-800 border-gray-600 placeholder-gray-400"
-                placeholder="Image URL"
-              />
-              <button
-                className="text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg py-2 px-4"
-                onClick={() => document.getElementById(`imageUpload-${imageIndex}`).click()}
-              >
-                Select Image
-              </button>
-              <input
-                type="file"
-                id={`imageUpload-${imageIndex}`}
-                style={{ display: 'none' }}
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    handleImageUpload(file, imageIndex);
-                  }
-                }}
-              />
-            </div>
-          ))}
-        </div>
+  {editProduct?.Images.map((image, imageIndex) => (
+    <div key={imageIndex} className="flex items-center gap-2 mb-2">
+      <input
+        type="text"
+        name="Images"
+        value={image}
+        onChange={(e) => handleChange(e, imageIndex)}
+        className="border rounded-lg p-2 w-full text-white bg-neutral-800 border-gray-600 placeholder-gray-400"
+        placeholder="Image URL"
+      />
+      <button
+        className="text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg py-2 px-4"
+        onClick={() => {
+          const fileInput = document.getElementById(`imageUpload-${imageIndex}`);
+          if (fileInput) {
+            fileInput.click();
+          }
+        }}
+      >
+        Select Image
+      </button>
+      <input
+        type="file"
+        id={`imageUpload-${imageIndex}`}
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            handleImageUpload(file, imageIndex);
+          }
+        }}
+      />
+    </div>
+  ))}
+</div>
+<div>
+  {editProduct?.Images.map((image, imageIndex) => (
+    <div key={imageIndex} className="flex items-center gap-2 mb-2">
+      <input
+        type="text"
+        name="Images"
+        value={image}
+        onChange={(e) => handleChange(e, imageIndex)}
+        className="border rounded-lg p-2 w-full text-white bg-neutral-800 border-gray-600 placeholder-gray-400"
+        placeholder="Image URL"
+      />
+      <button
+        className="text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-lg py-2 px-4"
+        onClick={() => {
+          const fileInput = document.getElementById(`imageUpload-${imageIndex}`);
+          if (fileInput) {
+            fileInput.click();
+          }
+        }}
+      >
+        Select Image
+      </button>
+      <input
+        type="file"
+        id={`imageUpload-${imageIndex}`}
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            handleImageUpload(file, imageIndex);
+          }
+        }}
+      />
+    </div>
+  ))}
+</div>
+
         <div className="mt-4 flex justify-end space-x-4">
           <button
             onClick={handleSave}
