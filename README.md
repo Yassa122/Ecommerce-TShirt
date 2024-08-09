@@ -41,3 +41,18 @@ npm install
 # Start the development servers
 npm run dev
 
+```
+## Screenshots
+
+Here are some screenshots showcasing different parts of the project:
+
+1. ![Home Page](https://imgur.com/RH5QyCN.png)
+2. ![](https://imgur.com/pVWd9uQ.png)
+3. ![](https://imgur.com/IJeGEQl.png)
+4. ![](https://imgur.com/MWmlyD1.png)
+5. ![](https://imgur.com/Nq1tvoU.png)
+6. ![](https://imgur.com/JQ9fmNu.png)
+7. ![](https://imgur.com/d8ZjDkE.png)
+8. ![](https://imgur.com/xxVD3AS.png)
+
+
