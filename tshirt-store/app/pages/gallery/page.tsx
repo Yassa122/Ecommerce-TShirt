@@ -22,7 +22,7 @@ const Gallery = () => {
   useEffect(() => {
     // Fetch photos from the backend
     axios.get('https://amaria-backend.vercel.app/api/admin/getAllPhotos')
-      .then(response => setPhotos(response.data.map((photo: { url: string }) => photo.url)))
+      .then(response => setPhotos(response.data))  // Ensure we set the entire array of objects { id, url }
       .catch(error => console.error('Error fetching photos:', error));
   }, []);
 
@@ -37,7 +37,7 @@ const Gallery = () => {
         },
       })
       .then(response => {
-        setPhotos([...photos, ...response.data]);
+        setPhotos([...photos, ...response.data]);  // Append newly added photos to the existing list
       })
       .catch(error => console.error('Error uploading photos:', error));
     }
