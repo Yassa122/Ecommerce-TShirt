@@ -58,7 +58,13 @@ const ProductList = () => {
 
   const handleSave = () => {
     if (editProduct !== null) {
-      axios.put(`https://amaria-backend.vercel.app/api/admin/editProduct/${editProduct.id}`, editProduct)
+      // Convert the Sizes array to a JSON string if needed by the backend
+      const productToSave = {
+        ...editProduct,
+        Sizes: JSON.stringify(editProduct.Sizes),
+      };
+  
+      axios.put(`https://amaria-backend.vercel.app/api/admin/editProduct/${editProduct.id}`, productToSave)
         .then(response => {
           setProducts(products.map(product => 
             product.id === editProduct.id ? editProduct : product
@@ -69,6 +75,7 @@ const ProductList = () => {
         .catch(error => console.error("Error updating product:", error));
     }
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index?: number) => {
     if (editProduct !== null) {
