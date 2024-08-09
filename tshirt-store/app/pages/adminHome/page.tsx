@@ -74,12 +74,15 @@ const AdminHome = () => {
     });
 
     axios.get("https://amaria-backend.vercel.app/api/admin/orders").then((response) => {
-      const transformedOrders = response.data.map((order: any) => ({
-        date: new Date(order.orderedAt._seconds * 1000).toLocaleDateString(),
-        total: order.TotalPrice,
-        deliveryFee: order.deliveryFee || 0,
-        netWorth: order.TotalPrice - (order.deliveryFee || 0)
-      }));
+      const transformedOrders = response.data.map((order: any) => {
+        const totalWithoutDelivery = order.items ? order.items.reduce((sum: number, item: any) => sum + item.TotalPrice * item.Quantity, 0) : 0;
+        return {
+          date: new Date(order.orderedAt._seconds * 1000).toLocaleDateString(),
+          total: totalWithoutDelivery,
+          deliveryFee: order.deliveryFee || 0,
+          netWorth: totalWithoutDelivery,
+        };
+      });
       setOrders(transformedOrders);
     });
   }, []);
@@ -104,7 +107,7 @@ const AdminHome = () => {
     labels: orders.map((order) => order.date),
     datasets: [
       {
-        label: "Total Orders",
+        label: "Total Orders (Without Delivery Fees)",
         data: orders.map((order) => order.total),
         fill: false,
         borderColor: "rgba(75, 192, 192, 1)",
@@ -128,7 +131,7 @@ const AdminHome = () => {
   };
 
   const donutData = {
-    labels: ['Net Worth', 'Delivery Fees'],
+    labels: ['Net Worth (Total Orders without Delivery Fees)', 'Delivery Fees'],
     datasets: [
       {
         label: 'Financial Overview',
@@ -143,7 +146,7 @@ const AdminHome = () => {
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
-        await axios.delete(`https://amaria-backend.vercel.app/api/admin/deleteProduct/${id}`);
+        await axios.delete(`http://localhost:3000/api/admin/deleteProduct/${id}`);
         setProducts(products.filter(product => product.id !== id));
         setFilteredProducts(filteredProducts.filter(product => product.id !== id));
         alert("Product deleted successfully!");
