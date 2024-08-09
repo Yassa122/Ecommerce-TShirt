@@ -55,7 +55,7 @@ const AddProduct = () => {
         },
       });
       alert("Product added successfully!");
-      router.push("/pages/productsList");
+      router.push("/pages/adminHome");
     } catch (error) {
       console.error("There was an error adding the product:", error);
       alert("Failed to add product. Please try again.");
